@@ -1,0 +1,13 @@
+asgiref==3.11.0
+click==8.3.1
+Django==6.0.1
+django-debug-toolbar==6.2.0
+django-typer==3.5.1
+Faker==40.1.2
+psycopg-binary==3.3.2
+psycopg2-binary==2.9.11
+semver==3.0.4
+shellingham==1.5.4
+sqlparse==0.5.5
+typer-slim==0.21.1
+typing_extensions==4.15.0
