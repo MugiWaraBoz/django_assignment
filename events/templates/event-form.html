@@ -1,10 +1,7 @@
 {% extends "template.html" %}
 {% block content %}
     <div class="bg-sky-100">
-        <form method="POST">
-            {% csrf_token %}
-            {{form.as_p}}
-            <button action="submit"> Submit </button>
-        </form>
+        <h1 class="bg-amber-950">Event Form</h1>
+        <p>Fill the form.</p>
     </div>
 {% endblock %}
