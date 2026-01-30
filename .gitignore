@@ -1,14 +1,14 @@
+# Python
 venv/
-db.sqlite3
-event_management/__pycache__/
-events/__pycache__/
 __pycache__/
-
-*.pyc
-*.pyo
-*.pyd
-*.sqlite3
+*.py[cod]
 *.log
 
+# Django
+db.sqlite3
 
+# Node
+node_modules/
 
+# Environment
+.env
