@@ -3,6 +3,9 @@ from django.utils.translation import gettext_lazy as _
 
 # Create your models here.
 class Participant(models.Model):
+    event = models.ManyToManyField(
+        "Event",
+        related_name = "participants")
 
     name = models.CharField(max_length=50)
     email = models.EmailField(max_length=254)
@@ -22,10 +25,6 @@ class Event(models.Model):
         on_delete=models.CASCADE,
         related_name = "events")
 
-    participants = models.ManyToManyField(
-        "Participant",
-        related_name = "events")
-
     def __str__(self):
         return self.name
 
@@ -36,6 +35,3 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
-
-
-
