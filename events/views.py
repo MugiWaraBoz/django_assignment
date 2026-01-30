@@ -6,3 +6,6 @@ def dashboard(request):
 
 def event_details(request):
     return render(request, 'event-details.html')
+
+def event_form(request):
+    return render(request, 'event-form.html')
