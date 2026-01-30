@@ -13,6 +13,7 @@ class Participant(models.Model):
 class Event(models.Model):
 
     name = models.CharField(max_length=50)
+    image = models.ImageField(upload_to='event_images/', null=True, blank=True)
     description = models.TextField()
     date = models.DateField(_("Event Date"))
     time = models.TimeField(_("Event Time"))
