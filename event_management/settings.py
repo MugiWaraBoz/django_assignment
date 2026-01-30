@@ -121,8 +121,8 @@ STATIC_URL = 'static/'
 
 
 # for static files
-STATIC_FILES_DIR = [
-	BASE_DIR / 'static'
+STATICFILES_DIRS = [
+	BASE_DIR / 'static',
 ]
 
 
