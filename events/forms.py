@@ -16,6 +16,7 @@ class EventModelForm(MixinStyleForm,forms.ModelForm):
             "date" : forms.SelectDateWidget(),
             "time": forms.TimeInput(attrs={'type': 'time'}),
             "category" : forms.Select(),
+            # TODO : Image upload not working properly
             "image" : forms.ClearableFileInput(),
             "participants" : forms.CheckboxSelectMultiple(),
         }
