@@ -1,5 +1,13 @@
 {% extends "template.html" %}
 {% block content %}
-    <h1>Event Details</h1>
-    <p>Here are the details of the event.</p>
+    <div class="bg-sky-100 p-4 m-4 rounded shadow-md w-1/2 mx-auto">
+        <h2 class="text-2xl font-bold mb-4">{{ event.name }}</h2>
+        {% if event.image %}
+            <img src="{{ event.image.url }}" alt="{{ event.name }}" class="mb-4 w-full h-auto rounded">
+        {% endif %}
+        <p class="mb-2"><strong>Description:</strong> {{ event.description }}</p>
+        <p class="mb-2"><strong>Date:</strong> {{ event.date }}</p>
+        <p class="mb-2"><strong>Location:</strong> {{ event.location }}</p>
+        <p class="mb-2"><strong>Category:</strong> {{ event.category.name }}</p>
+    </div>
 {% endblock %}

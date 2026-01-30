@@ -1,7 +1,27 @@
 {% extends "template.html" %}
 {% block content %}
-    <div class="bg-sky-100">
-        <h1 class="bg-amber-950">Dashboard</h1>
-        <p>Welcome to the dashboard.</p>
+<div class="bg-sky-100">
+    {% comment %} For Deleting a event 
+    <a href="{% url "delete-event" event.id %}">
+    </a>
+    {% endcomment %}
+
+    {% comment %} For Editing an event 
+    <a href="{% url "edit-event" event.id %}">        
+    </a>
+    {% endcomment %}
+
+    {% comment %} For Viewing event details 
+    <a href="{% url "event-details" event.id %}">  
+    </a>
+    {% endcomment %}
+
+
+    {% for event in Events %}
+            <div class="mx-auto bg-blue-500 p-4 m-4 rounded shadow-md w-1/2">
+                <p>{{event.name}}</p><br>
+                <p>{{event.description}}s</p>
+            </div>
+    {% endfor %}
     </div>
 {% endblock %}

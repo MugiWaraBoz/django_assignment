@@ -1,26 +1,63 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from events.models import Participant,Event,Category
 from events.forms import EventModelForm
 
 # Create your views here.
 def dashboard(request):
-    return render(request, 'dashboard.html')
+    events = Event.objects.all();
+    
+    context = {
+        "Events" : events,
+    }
+    return render(request, 'dashboard.html', context)
 
-def event_details(request):
-    return render(request, 'event-details.html')
+def event_details(request, event_id):
+    event = Event.objects.get(id=event_id)
+
+    context = {
+        "event": event,
+    }
+
+    return render(request, "event-details.html", context)
 
 def event_form(request):
-    category = Category.objects.all()
-    participants = Participant.objects.all()
     form = EventModelForm()
 
     if request.method == "POST":
         form = EventModelForm(request.POST)
         if form.is_valid():
             form.save()
-    
+            return redirect('dashboard')
+
     context = {
         "form": form,
     }
 
     return render(request, "event-form.html", context)
+
+def edit_event(request, event_id):
+    event = Event.objects.get(id=event_id)
+    form = EventModelForm(instance=event)
+
+    if request.method == "POST":
+        form = EventModelForm(request.POST, instance=event)
+        if form.is_valid():
+            form.save()
+            return redirect('dashboard')
+
+    context = {
+        "form": form,
+    }
+
+    return render(request, "event-form.html", context)
+
+
+
+def delete_event(request, event_id):
+    try:
+        event = Event.objects.get(id=event_id)
+        event.delete()
+    except Event.DoesNotExist:
+        pass  # Optionally handle the case where the event does not exist
+
+    return redirect('dashboard')

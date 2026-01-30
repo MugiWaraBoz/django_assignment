@@ -10,12 +10,13 @@ class MixinStyleForm:
 class EventModelForm(MixinStyleForm,forms.ModelForm):
     class Meta:
         model = Event
-        fields = ["name", "description", "date", "time", "location", "category", "participants"]
+        fields = ["name", "description", "date", "time", "location", "category", "image", "participants"]
     
         widgets = {
             "date" : forms.SelectDateWidget(),
             "time": forms.TimeInput(attrs={'type': 'time'}),
             "category" : forms.Select(),
+            "image" : forms.ClearableFileInput(),
             "participants" : forms.CheckboxSelectMultiple(),
         }
 
