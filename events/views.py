@@ -8,6 +8,7 @@ def dashboard(request):
     
     context = {
         "Events" : events,
+        "categories": Category.objects.all(),
     }
     return render(request, 'dashboard.html', context)
 
@@ -15,7 +16,7 @@ def event_details(request, event_id):
     event = Event.objects.get(id=event_id)
 
     context = {
-        "event": event,
+        "event": event
     }
 
     return render(request, "event-details.html", context)

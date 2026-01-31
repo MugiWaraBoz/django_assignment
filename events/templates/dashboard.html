@@ -1,6 +1,6 @@
 {% extends "template.html" %}
 {% block content %}
-<div class="bg-sky-100">
+
     {% comment %} For Deleting a event 
     <a href="{% url "delete-event" event.id %}">
     </a>
@@ -15,13 +15,115 @@
     <a href="{% url "event-details" event.id %}">  
     </a>
     {% endcomment %}
+    <div class="grid grid-cols-4 gap-4 p-4">
+        <div class="h-25 grid grid-cols-2 bg-white p-4 rounded-xl border border-blue-100 text-black items-center">
+            <div>
+                <p class="font-bold text-lg">Total Participants</p>
+                <p class="text-lg">124{{ total_participants }}</p>
+            </div>
+            <div class="justify-self-end h-15 w-15 bg-blue-700/20 rounded-full flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-10">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
+            </svg>
+            </div>
+        </div>
+        <div class="h-25 grid grid-cols-2 bg-white p-4 rounded-xl border border-blue-100 text-black items-center">
+            <div>
+                <p class="font-bold text-lg">Total Events</p>
+                <p class="text-lg">123{{ total_events }}</p>
+            </div>
+            <div class="justify-self-end h-15 w-15 bg-blue-700/20 rounded-full flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-10">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
+            </svg>
+            </div>
 
+        </div>
+        <div class="h-25 grid grid-cols-2 bg-white p-4 rounded-xl border border-blue-100 text-black items-center">
+            <div>
+                <p class="font-bold text-lg">Upcoming Events</p>
+                <p class="text-lg">123{{ upcoming_events }}</p>
+            </div>
+            <div class="justify-self-end h-15 w-15 bg-blue-700/20 rounded-full flex items-center justify-center ">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-10">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 8.689c0-.864.933-1.406 1.683-.977l7.108 4.061a1.125 1.125 0 0 1 0 1.954l-7.108 4.061A1.125 1.125 0 0 1 3 16.811V8.69ZM12.75 8.689c0-.864.933-1.406 1.683-.977l7.108 4.061a1.125 1.125 0 0 1 0 1.954l-7.108 4.061a1.125 1.125 0 0 1-1.683-.977V8.69Z" />
+                </svg>
+                </div>
+        </div>
 
+        
+        <div class="h-25 grid grid-cols-2 bg-white p-4 rounded-xl border border-blue-100 text-black items-center">
+            <div>
+                <p class="font-bold text-lg">Past Events</p>
+                <p class="text-lg">123{{ past_events }}</p>
+            </div>
+            <div class="justify-self-end h-15 w-15 bg-blue-700/20 rounded-full flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-10">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 16.811c0 .864-.933 1.406-1.683.977l-7.108-4.061a1.125 1.125 0 0 1 0-1.954l7.108-4.061A1.125 1.125 0 0 1 21 8.689v8.122ZM11.25 16.811c0 .864-.933 1.406-1.683.977l-7.108-4.061a1.125 1.125 0 0 1 0-1.954l7.108-4.061a1.125 1.125 0 0 1 1.683.977v8.122Z" />
+            </svg>
+            </div>
+        </div>
+    </div>
+
+    {% comment %} search bar {% endcomment %}
+    <div class="grid grid-cols-6 gap-4 p-4 items-center justify-evenly">
+        <h2 class="text-2xl font-bold ">Today's Events</h2>
+        <div class="col-span-4">
+            <form method="GET" action="{% url 'dashboard' %}" class="flex border border-gray-700 rounded-full px-2 py-1">
+                <input type="text" name="search" placeholder="Search events..." class="focus:outline-none w-full rounded px-2 py-1" value="{{ request.GET.search }}">
+                <button type="submit" class=" bg-blue-500 hover:bg-blue-700 h-10 w-10 text-white font-bold rounded-full justify-center items-center flex ml-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                    </svg>
+                </button>
+            </form>
+        </div>
+        <a href="{% url 'event_form' %}" class=" bg-blue-500 hover:bg-blue-700 text-white font-bold rounded-full py-2 px-4 text-center">+ Create New Event</a>
+    </div>
+
+    <div class="flex p-4 justify-center items-center">
+        <p class="px-3 font-bold text-xl"> Categorys : </p>
+        {% for category in categories %}
+            <span class="hover:bg-blue-500 bg-blue-600 text-white px-2 py-1 rounded-full mr-2">{{ category.name }}</span>
+        {% endfor %}
+    </div>
+
+    {% comment %} event cards {% endcomment %}
+    <div class="grid md:grid-cols-1 lg:grid-cols-2 gap-4 p-4">
     {% for event in Events %}
-            <div class="mx-auto bg-blue-500 p-4 m-4 rounded shadow-md w-1/2">
-                <p>{{event.name}}</p><br>
-                <p>{{event.description}}s</p>
+            <div onclick="window.location.href='{% url "event-details" event.id %}'" class="grid md:grid-cols-1 lg:grid-cols-2 hover:bg-gray-100 bg-white p-4 rounded-xl border border-blue-100 text-black">
+                <div>
+                <p class="font-bold text-2xl">{{event.name}}</p><br>
+                <p class="font-bold">Category: <span class="bg-blue-600 text-white px-2 py-1 rounded-full">{{event.category.name}}</span></p>
+                <p class="my-2">Date: {{event.date}}</p>
+                <p class="my-2">Time: {{event.time}}</p>
+                <p class="my-2">Location: {{event.location}}</p>
+                <div class="mt-4">
+                    <a href="{% url 'edit-event' event.id %}" class="hover:bg-cyan-700 bg-cyan-400 text-white font-bold py-2 px-4 rounded-full mr-2">Edit</a>
+                    <a href="{% url 'delete-event' event.id %}" class="hover:bg-red-700 bg-red-500 text-white font-bold py-2 px-4 rounded-full">Delete</a>
+                </div>
+                </div>
+                <div>
+                    <div>
+                        {% if event.image %}
+                            <img src="{{ event.image.url }}" alt="{{ event.name }}" class="mb-4 w-full h-auto rounded">
+                        {% else %}
+                            <div class="mb-4 w-full h-40 bg-gray-200 flex items-center justify-center rounded">
+                                <span class="text-gray-500">No Image Available</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="flex justify-center items-center">
+                        <div class="h-10 w-10 bg-blue-700/20 rounded-full flex items-center justify-center mr-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM3 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 9.374 21c-2.331 0-4.512-.645-6.374-1.766Z" />
+                            </svg>
+                        </div>
+                        <p><span class="font-bold">{{ event.participants.count }}</span> People</p>
+                    </div>
+                </div>
             </div>
     {% endfor %}
     </div>
+
 {% endblock %}

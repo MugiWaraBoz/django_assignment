@@ -7,11 +7,25 @@
         <title>Event Management</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="{% static 'css/style.css' %}">
+        <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+        {% comment %} <link rel="stylesheet" href="{% static 'css/style.css' %}"> {% endcomment %}
+        <style>
+        </style>
     </head>
-    <body>
-        <h1 class="text-3xl font-bold p-4">Template</h1>
+    <body class="mx-auto bg-cyan-100 ">
+        <div class="bg-sky-700/50 backdrop-blur-sm navbar d-flex m-4 p-4 shadow-sm rounded-xl">
+            <ul class="list-style-none justify-self-end gap-4 m-0 p-0 text-white">
+                <li class="bg-blue-900 w-10 h-10 rounded-full flex items-center justify-center"><a href="{% url 'dashboard' %}" class="text-lg font-bold">D</a></li>
+            </ul> 
+        </div>
+
+        <div class="max-w-[1440px] justify-self-center">
         {% block content %}
         {% endblock content %}
+        </div>
+
+        <div class="footer">
+            <p>&copy; 2024 Event Management</p>
+        </div>
     </body>
 </html>
