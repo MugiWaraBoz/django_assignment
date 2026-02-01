@@ -32,6 +32,7 @@ def event_form(request):
 
     context = {
         "form": form,
+        "title": "Add a New Event",
     }
 
     return render(request, "event-form.html", context)
@@ -48,6 +49,7 @@ def edit_event(request, event_id):
 
     context = {
         "form": form,
+        "title": "Edit Event",
     }
 
     return render(request, "event-form.html", context)

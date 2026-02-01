@@ -15,9 +15,9 @@ class Event(models.Model):
     name = models.CharField(max_length=50)
     image = models.ImageField(upload_to='event_images/', null=True, blank=True)
     description = models.TextField()
+    location = models.CharField(_("Event Location"), max_length=250)
     date = models.DateField(_("Event Date"))
     time = models.TimeField(_("Event Time"))
-    location = models.CharField(_("Event Location"), max_length=250)
     category = models.ForeignKey(
         "Category", 
         on_delete=models.CASCADE,

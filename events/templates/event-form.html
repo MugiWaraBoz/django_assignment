@@ -1,10 +1,38 @@
 {% extends "template.html" %}
 {% block content %}
-    <div class="">
-        <form method="POST">
-            {% csrf_token %}
-            {{form.as_p}}
-            <button action="submit"> Submit </button>
-        </form>
+    <div class="p-4 shadow-md rounded-lg p-6">
+        <div class="text-center text-2xl font-bold mb-4"> {{ title }} </div>
+        <div>
+            <form method="POST" class="p-6">
+                {% csrf_token %}
+                {% comment %} regular fields {% endcomment %}
+                {% for field in form %}
+                    {% if field.name != "participants" %}
+                        <div class="">
+                        <p>{{ field.label_tag }}<p>
+                        <div>{{ field }}</div>
+                        {% if field.errors %}
+                            <p class="text-red-500 text-sm text-center">{{ field.errors }}</p>
+                        {% endif %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+
+                {% comment %} CheckboxSelectMultiple {% endcomment %}
+                <div class="col-span-2">
+                    <label class="block m-2 font-medium text-gray-700 text-2xl">Participants :</label>
+                    <div class="flex flex-wrap lg:flex-row sm:flex-col gap-3 p-4 border border-gray-300 rounded-lg">
+                        {% for checkbox in form.participants %}
+                        <div class="flex items-center text-white gap-3 bg-blue-500 p-2 rounded-xl hover:bg-blue-700 justify-stretch">
+                            {{ checkbox.tag }}
+                            <span>{{ checkbox.choice_label }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <button action="submit" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold m-3 py-2 px-4 rounded-full cursor-pointer"> Submit </button>
+            </form>
+        </div>
     </div>
 {% endblock %}
