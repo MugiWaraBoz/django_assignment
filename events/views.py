@@ -27,10 +27,11 @@ def dashboard(request):
     return render(request, 'dashboard.html', context)
 
 def event_details(request, event_id):
-    event = Event.objects.get(id=event_id)
+    event = Event.objects.prefetch_related('participants').get(id=event_id)
 
     context = {
-        "event": event
+        "event": event,
+        "count": event.participants.aggregate(participants_cnt=Count('id')),
     }
 
     return render(request, "event-details.html", context)
