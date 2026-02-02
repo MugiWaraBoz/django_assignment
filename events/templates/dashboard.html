@@ -15,6 +15,7 @@
     <a href="{% url "event-details" event.id %}">  
     </a>
     {% endcomment %}
+    {% comment %} Stats Cards {% endcomment %}
     <div class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-4">
         <div class="h-auto grid grid-cols-2 bg-white p-4 rounded-xl border border-blue-100 text-black items-center">
             <div>
@@ -27,7 +28,9 @@
             </svg>
             </div>
         </div>
-        <div class="h-auto grid grid-cols-2 bg-white p-4 rounded-xl border border-blue-100 text-black items-center">
+        <a
+        href="?filter_events=All Events{% if category_id %}&category={{ category_id }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">
+        <div class="cursor-pointer h-auto grid grid-cols-2 bg-white p-4 rounded-xl border border-blue-100 text-black items-center hover:bg-blue-50 transition-colors">
             <div>
                 <p class="font-bold text-sm text-center mb-1">Total<br>Events</p>
                 <p class="text-5xl text-center">{{ count.total_events }}</p>
@@ -39,7 +42,9 @@
             </div>
 
         </div>
-        <div class="h-auto grid grid-cols-2 bg-white p-4 rounded-xl border border-blue-100 text-black items-center">
+        </a>
+        <a href="?filter_events=Upcoming Events{% if category_id %}&category_id={{ category_id }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">
+        <div class="cursor-pointer h-auto grid grid-cols-2 bg-white p-4 rounded-xl border border-blue-100 text-black items-center hover:bg-blue-50 transition-colors">
             <div>
                 <p class="font-bold text-sm text-center mb-1">Upcoming<br>Events</p>
                 <p class="text-5xl text-center">{{ count.upcoming_events }}</p>
@@ -50,7 +55,9 @@
                 </svg>
                 </div>
         </div>
-        <div class="h-auto grid grid-cols-2 bg-white p-4 rounded-xl border border-blue-100 text-black items-center">
+        </a>
+        <a href="?filter_events=Past Events{% if category_id %}&category_id={{ category_id }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">
+        <div class="cursor-pointer h-auto grid grid-cols-2 bg-white p-4 rounded-xl border border-blue-100 text-black items-center hover:bg-blue-50 transition-colors">
             <div>
                 <p class="font-bold text-sm text-center mb-1">Past<br>Events</p>
                 <p class="text-5xl text-center">{{ count.past_events }}</p>
@@ -61,30 +68,57 @@
             </svg>
             </div>
         </div>
+        </a>
     </div>
 
     {% comment %} search bar {% endcomment %}
     <div class="grid md:grid-cols-1 lg:grid-cols-6 gap-4 p-4 items-center justify-evenly">
-        <h2 class="text-2xl font-bold ">Today's Events</h2>
+        <h2 class="text-2xl font-bold ">{{ filter_events|default:"Today's Events" }}</h2>
         <div class="col-span-4">
-            <form method="GET" action="{% url 'dashboard' %}" class="flex border border-gray-700 rounded-full px-2 py-1">
-                <input type="text" name="search" placeholder="Search events..." class="focus:outline-none w-full rounded px-2 py-1" value="{{ request.GET.search }}">
-                <button type="submit" class=" bg-blue-500 hover:bg-blue-700 h-10 w-10 text-white font-bold rounded-full justify-center items-center flex ml-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+            <form method="GET" action="{% url 'dashboard' %}"
+                class="flex border border-gray-700 rounded-full px-2 py-1">
+
+                {% if filter_events %}
+                    <input type="hidden" name="filter_events" value="{{ filter_events }}">
+                {% endif %}
+
+                {% if category_id %}
+                    <input type="hidden" name="category" value="{{ category_id }}">
+                {% endif %}
+
+                <input
+                    type="text"
+                    name="search"
+                    placeholder="Search events..."
+                    value="{{ search_query }}"
+                    class="focus:outline-none w-full rounded px-2 py-1"
+                >
+
+                <button type="submit"
+                    class="bg-blue-500 hover:bg-blue-700 h-10 w-10 text-white font-bold rounded-full flex items-center justify-center ml-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
                     </svg>
                 </button>
             </form>
+
         </div>
         <a href="{% url 'event_form' %}" class=" bg-blue-500 hover:bg-blue-700 text-white font-bold rounded-full py-2 px-4 text-center">+ New Event</a>
     </div>
 
     {% comment %} Categories {% endcomment %}
-    <div class="flex flex-col p-4items-center">
+    <div class="flex flex-col p-4 items-center">
         <p class="px-3 font-bold text-xl mb-3"> Categorys : </p>
         <div class="mx-3 flex flex-wrap gap-2">
         {% for category in categories %}
-            <span class="hover:bg-blue-500 bg-blue-600 text-white px-2 py-1 rounded-full mr-2">{{ category.name }}</span>
+            {% comment %} <span class="hover:bg-blue-500 bg-blue-600 text-white px-2 py-1 rounded-full mr-2">{{ category.name }}</span> {% endcomment %}
+            <a href="{% url 'dashboard' %}?category={{ category.id }}{% if filter_events %}&filter_events={{ filter_events }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}" 
+            class="hover:bg-blue-500 bg-blue-600 text-white px-2 py-1 rounded-full mr-2">
+                {{ category.name }}
+            </a>
         {% endfor %}
         </div>
     </div>

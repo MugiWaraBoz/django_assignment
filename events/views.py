@@ -9,6 +9,10 @@ def dashboard(request):
     events = Event.objects.all().select_related('category').prefetch_related('participants')
     categories = Category.objects.all()
     current_date = date.today()
+    category_id = request.GET.get('category')
+    filter_events = request.GET.get('filter_events')
+    search_query = request.GET.get('search')
+
 
     count = events.aggregate(        
         total_events = Count('id', distinct=True),
@@ -18,10 +22,27 @@ def dashboard(request):
         participants_cnt = Count('participants__id'),
     )
 
+    if filter_events == "Upcoming Events":
+        events = events.filter(date__gt=current_date)
+    elif filter_events == "Past Events":
+        events = events.filter(date__lt=current_date)
+    elif filter_events == "All Events":
+        events = events
+    else:
+        events = events.filter(date=current_date)
+
+    if category_id:
+        events = events.filter(category__id=category_id)
+
+    if search_query:
+        events = events.filter(Q(name__icontains=search_query) | Q(description__icontains=search_query))
+
     context = {
         "Events" : events,
         "categories": categories,
         "count": count,
+        "filter_events": filter_events,
+        "search_query": search_query,
 
     }
     return render(request, 'dashboard.html', context)
