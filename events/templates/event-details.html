@@ -1,22 +1,48 @@
-<!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
-<html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title></title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="">
-    </head>
-    <body>
-        <!--[if lt IE 7]>
-            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
-        <![endif]-->
-        
-        <script src="" async defer></script>
-    </body>
-</html>
+{% extends "template.html" %}
+{% block content %}
+    <div class="">
+        <div>
+            <h1 class="text-3xl font-bold mb-4 text-slate-100"> {{ event.name }} </h1>
+            <p class="text-slate-300"><strong>Category:</strong> <span class="ml-2 bg-blue-500/50 backdrop-blur-sm p-2 rounded-full text-white">{{ event.category.name }}</span></p>
+        </div>
+        <div>
+            <div class="grid md:grid-cols-1 lg:grid-cols-3 gap-4">
+                <div class="sm:col-span-1 md:col-span-3 mt-4">
+                    {% if event.image %}
+                        <img src="../..{{ event.image.url }}" alt="{{ event.name }}" class="w-full h-60 rounded-lg object-scale-down border border-slate-700/40">
+                    {% else %}
+                        <div class="w-full h-60 bg-slate-800/50 backdrop-blur-sm flex items-center justify-center rounded-lg border border-slate-700/40">
+                            <span class="text-slate-400">No Image Available</span>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="sm:col-span-1 md:col-span-2 bg-slate-800/50 backdrop-blur-lg p-4 rounded-lg border border-slate-700/40">
+                    <h1 class="text-2xl font-bold mb-2 text-slate-100">Event Details</h1>
+                    <p class="mb-2 text-slate-300">{{ event.description }}</p>
+                </div>
+                <div class="bg-slate-800/50 backdrop-blur-lg p-4 rounded-lg border border-slate-700/40">
+                    <h2 class="text-xl font-bold mb-2 text-slate-100">Event Information</h2>
+                    <div class="font-bold text-slate-200">Date:</div><div class="text-4xl mb-4 text-blue-400">{{ event.date }}</div>
+                    <div class="font-bold text-slate-200">Time:</div><div class="text-4xl mb-4 text-blue-400">{{ event.time }}</div>
+                    <div class="font-bold text-slate-200">Location:</div><div class="text-4xl mb-4 text-blue-400">{{ event.location }}</div>
+                </div>
+            </div>
+            <div class="mt-6 bg-slate-800/50 backdrop-blur-lg p-4 rounded-lg border border-slate-700/40">
+                <div class="flex justify-between mb-4 p-3">   
+                    <h1 class="text-3xl font-bold text-slate-100"> Participants </h1>
+                    <div class="flex bg-blue-500/40 backdrop-blur-sm p-2 rounded-full">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 text-blue-200 mr-2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                        </svg>
+
+                        <p class="text-blue-200">  {{ count.participants_cnt }} Persons</p>
+                    </div>
+                </div>
+                {% for participant in event.participants.all %}
+                    <span class="inline-block bg-blue-500/50 backdrop-blur-sm text-white px-3 py-1 rounded-full mr-2 mb-2">{{ participant.name }}</span>
+                {% endfor %}
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
