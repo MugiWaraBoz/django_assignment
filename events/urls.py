@@ -6,7 +6,7 @@ from django.conf.urls.static import static
 
 
 urlpatterns = [
-    path('dashboard/', dashboard, name = "dashboard"),
+    path('', dashboard, name = "dashboard"),
     path('details/<int:event_id>/', event_details, name = "event-details"),
     path("add-events/", event_form, name = "event_form"),
     path("delete-event/<int:event_id>/", delete_event, name="delete-event"),
