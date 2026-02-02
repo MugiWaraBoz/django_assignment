@@ -4,7 +4,7 @@ from events.models import Participant,Event,Category
 
 class MixinStyleForm:
 
-    default_class = "border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 m-2"
+    default_class = "border border-slate-700/40 bg-slate-800/50 backdrop-blur-sm text-slate-100 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 m-2 focus:bg-slate-800/70 transition-colors"
 
     def apply_styles(self):
         for field_name, field in self.fields.items():
@@ -17,7 +17,7 @@ class MixinStyleForm:
             elif isinstance(field.widget, forms.ClearableFileInput):
                 field.widget.attrs.update(
                     {
-                        "class": "block text-sm text-white bg-blue-500 hover:bg-blue-700 rounded-lg border border-gray-300 cursor-pointer focus:outline-none focus:border-transparent p-2.5",
+                        "class": "block text-sm text-white bg-gradient-to-r from-blue-500/70 to-indigo-500/70 hover:from-blue-600/90 hover:to-indigo-600/90 backdrop-blur-sm rounded-lg border border-slate-700/40 cursor-pointer focus:outline-none focus:border-transparent p-2.5 transition-all duration-200 shadow-md",
                     }
                 )
             elif isinstance(field.widget, forms.TimeInput):

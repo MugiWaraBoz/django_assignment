@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect
 from events.models import Participant,Event,Category
 from events.forms import EventModelForm
 from django.db.models import Count, Q
+from django.contrib.messages import constants as messages
 
 # Create your views here.
 def dashboard(request):
@@ -45,6 +46,7 @@ def dashboard(request):
         "search_query": search_query,
 
     }
+
     return render(request, 'dashboard.html', context)
 
 def event_details(request, event_id):
@@ -62,9 +64,10 @@ def event_form(request):
     form = EventModelForm()
 
     if request.method == "POST":
-        form = EventModelForm(request.POST)
+        form = EventModelForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
+            print(request.FILES)
             return redirect('dashboard')
 
     context = {
@@ -79,9 +82,10 @@ def edit_event(request, event_id):
     form = EventModelForm(instance=event)
 
     if request.method == "POST":
-        form = EventModelForm(request.POST, instance=event)
+        form = EventModelForm(request.POST,request.FILES, instance=event)
         if form.is_valid():
             form.save()
+            
             return redirect('dashboard')
 
     context = {

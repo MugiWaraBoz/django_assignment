@@ -12,20 +12,77 @@
         <style>
         </style>
     </head>
-    <body class="mx-auto bg-cyan-100 ">
-        <div class="bg-sky-700/50 backdrop-blur-sm navbar d-flex m-4 p-4 shadow-sm rounded-xl">
-            <ul class="list-style-none justify-self-end gap-4 m-0 p-0 text-white">
-                <li class="bg-blue-900 w-10 h-10 rounded-full flex items-center justify-center"><a href="{% url 'dashboard' %}" class="text-lg font-bold">D</a></li>
+    <body class="mx-auto bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+        
+        {% comment %} For mobile {% endcomment %}
+        <div id="mobile-nav" class="hidden bg-slate-900/60 backdrop-blur-lg border border-slate-700/40 w-1/2 h-full fixed top-0 left-0 z-50 pt-10" id="mobile-menu">
+            <ul class="list-style-none flex flex-col justify-between gap-4 m-0 p-0 text-slate-300">
+                <li  class="mx-4 bg-slate-800/50 backdrop-blur-lg p-4 rounded-xl border border-slate-700/40 text-slate-100 text-center">
+                    <p class="text-2xl font-bold text-white">Home</p>
+                </li>
+                <li class="mx-4 bg-slate-800/50 backdrop-blur-lg p-4 rounded-xl border border-slate-700/40 text-slate-100 text-center">
+                    <p class="text-2xl font-bold text-white">About us</p>
+                </li>
+                <li class="mx-4 bg-slate-800/50 backdrop-blur-lg p-4 rounded-xl border border-slate-700/40 text-slate-100 text-center">
+                    <p class="text-2xl font-bold text-white">Contact us</p>
+                </li>
+            </ul>
+        </div>
+
+
+        <div class="bg-slate-900/60 backdrop-blur-lg m-4 p-4 shadow-lg rounded-xl border border-slate-700/40">
+            <ul class="list-style-none flex justify-between gap-4 m-0 p-0 text-slate-300">
+                <button id="mobile-menu-button" class="md:hidden flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 5.25h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5" />
+                    </svg>
+                </button>
+                <li class="md:flex hidden items-center justify-center">
+                    <p class="pl-5 text-2xl font-bold text-white">Home</p>
+                </li>
+                <li class="md:flex hidden items-center justify-center">
+                    <p class="pl-5 text-2xl font-bold text-white">About us</p>
+                </li>
+                <li class="md:flex hidden items-center justify-center">
+                    <p class="pl-5 text-2xl font-bold text-white">Contact us</p>
+                </li>
+                <a href="{% url 'dashboard' %}" class="justify-self-end">
+                    <li class="bg-gradient-to-br from-blue-500/60 to-indigo-500/60 w-18 h-18 rounded-full flex items-center justify-center shadow-lg backdrop-blur-sm">
+                        <p class="text-3xl font-bold text-white">D</p>
+                    </li>
+                </a>
             </ul> 
         </div>
 
-        <div class="md:w-full lg:max-w-[1440px] justify-self-center">
+        <div class="md:w-full lg:max-w-[1440px] justify-self-center p-5 h-auto mx-auto">
         {% block content %}
         {% endblock content %}
         </div>
 
-        <div class="footer">
+        <div class="bg-slate-900/60 backdrop-blur-lg d-flex m-4 p-4 shadow-lg rounded-xl border border-slate-700/40 text-slate-300">
             <p>&copy; 2024 Event Management</p>
         </div>
+
+        <script>
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileNav = document.getElementById('mobile-nav');
+
+            mobileMenuButton.addEventListener('click', (e) => {
+                e.stopPropagation(); // IMPORTANT
+                mobileNav.classList.toggle('hidden');
+            });
+
+            mobileNav.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+
+            window.addEventListener('click', () => {
+                if (!mobileNav.classList.contains('hidden')) {
+                    mobileNav.classList.add('hidden');
+                }
+            });
+
+
+        </script>
     </body>
 </html>
