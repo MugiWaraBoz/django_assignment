@@ -1,14 +1,28 @@
+from datetime import date
 from django.shortcuts import render, redirect
 from events.models import Participant,Event,Category
 from events.forms import EventModelForm
+from django.db.models import Count, Q
 
 # Create your views here.
 def dashboard(request):
-    events = Event.objects.all();
-    
+    events = Event.objects.all().select_related('category').prefetch_related('participants')
+    categories = Category.objects.all()
+    current_date = date.today()
+
+    count = events.aggregate(        
+        total_events = Count('id', distinct=True),
+        Today_events = Count('id',filter=Q(date=current_date)),
+        upcoming_events = Count('id', filter=Q(date__gt=current_date), distinct=True),
+        past_events = Count('id', filter=Q(date__lt=current_date), distinct=True),
+        participants_cnt = Count('participants__id'),
+    )
+
     context = {
         "Events" : events,
-        "categories": Category.objects.all(),
+        "categories": categories,
+        "count": count,
+
     }
     return render(request, 'dashboard.html', context)
 
