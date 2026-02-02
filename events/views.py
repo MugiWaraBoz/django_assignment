@@ -36,6 +36,7 @@ def event_details(request, event_id):
 
     return render(request, "event-details.html", context)
 
+
 def event_form(request):
     form = EventModelForm()
 
