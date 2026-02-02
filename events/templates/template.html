@@ -54,7 +54,7 @@
             </ul> 
         </div>
 
-        <div class="md:w-full lg:max-w-[1440px] justify-self-center p-5 h-auto mx-auto">
+        <div class="md:w-full min-h-dvh lg:max-w-[1440px] justify-self-center p-5 h-auto mx-auto">
         {% block content %}
         {% endblock content %}
         </div>
@@ -63,6 +63,7 @@
             <p>&copy; 2024 Event Management</p>
         </div>
 
+        {% comment %} Simple button reveal JS {% endcomment %}
         <script>
             const mobileMenuButton = document.getElementById('mobile-menu-button');
             const mobileNav = document.getElementById('mobile-nav');

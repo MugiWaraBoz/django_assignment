@@ -9,7 +9,7 @@
             <div class="grid md:grid-cols-1 lg:grid-cols-3 gap-4">
                 <div class="sm:col-span-1 md:col-span-3 mt-4">
                     {% if event.image %}
-                        <img src="{{ event.image.url }}" alt="{{ event.name }}" class="w-full h-60 rounded-lg object-scale-down border border-slate-700/40">
+                        <img src="../..{{ event.image.url }}" alt="{{ event.name }}" class="w-full h-60 rounded-lg object-scale-down border border-slate-700/40">
                     {% else %}
                         <div class="w-full h-60 bg-slate-800/50 backdrop-blur-sm flex items-center justify-center rounded-lg border border-slate-700/40">
                             <span class="text-slate-400">No Image Available</span>

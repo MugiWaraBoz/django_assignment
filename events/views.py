@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from events.models import Participant,Event,Category
 from events.forms import EventModelForm
 from django.db.models import Count, Q
-from django.contrib.messages import constants as messages
+from django.contrib import messages
 
 # Create your views here.
 def dashboard(request):
@@ -47,6 +47,9 @@ def dashboard(request):
 
     }
 
+    if not events.exists():
+        messages.info(request, "No events found matching your criteria.")
+    
     return render(request, 'dashboard.html', context)
 
 def event_details(request, event_id):
@@ -67,8 +70,11 @@ def event_form(request):
         form = EventModelForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            print(request.FILES)
+            messages.success(request, "Event created successfully!")
             return redirect('dashboard')
+        else:
+            messages.error(request, "Something went wrong.")
+            
 
     context = {
         "form": form,
@@ -85,14 +91,15 @@ def edit_event(request, event_id):
         form = EventModelForm(request.POST,request.FILES, instance=event)
         if form.is_valid():
             form.save()
-            
+            messages.success(request, "Event updated successfully!")
             return redirect('dashboard')
+        else:
+            messages.error(request, "Something went wrong.")
 
     context = {
         "form": form,
         "title": "Edit Event",
     }
-
     return render(request, "event-form.html", context)
 
 
@@ -101,7 +108,8 @@ def delete_event(request, event_id):
     try:
         event = Event.objects.get(id=event_id)
         event.delete()
+        messages.success(request, "Event deleted successfully!")
     except Event.DoesNotExist:
-        pass  # Optionally handle the case where the event does not exist
+        messages.error(request, "Event not found.")
 
     return redirect('dashboard')
