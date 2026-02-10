@@ -4,7 +4,6 @@ from events.views import dashboard, event_details,event_form, delete_event, edit
 from django.conf import settings
 from django.conf.urls.static import static
 
-
 urlpatterns = [
     path('', dashboard, name = "dashboard"),
     path('details/<int:event_id>/', event_details, name = "event-details"),
