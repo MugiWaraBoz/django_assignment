@@ -13,14 +13,20 @@ from user.forms import CustomUserCreationForm, CustomAuthenticationForm
 
 # Create your views here.
 def sign_in(request):
-    form = AuthenticationForm()
+    form = CustomAuthenticationForm()
     if request.method == "POST":
-        form = AuthenticationForm(request.POST)
+        form = CustomAuthenticationForm(request, data=request.POST)
         if form.is_valid():
-            form.save()
-            messages.success(request, "Account Created Successfully")
-            return redirect("dashboard")
+            print(form)
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
 
+            user = authenticate(request, username = username, password = password)
+            if user is not None:
+                login(request, user)
+                messages.success(request, f"Logged in {username}")
+                return redirect("dashboard")
+            
     context = {
         'form' : form,
     }
@@ -30,7 +36,6 @@ def sign_up(request):
     form = CustomUserCreationForm()
 
     if request.method == "POST":
-        print("Post Request Recived ✅")
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             form.save()
@@ -43,7 +48,7 @@ def sign_up(request):
     return render(request, 'registration/sign-up.html', context)
 
 def sign_out(request):
-    if request.method == 'POST':
-        messages.success(request, "Log Out Successfully")
-        logout(request)
+    messages.success(request, "Log Out Successfully")
+    logout(request)
+    # if request.method == 'POST':
     return redirect("dashboard")

@@ -4,7 +4,7 @@ from events.forms import MixinStyleForm
 from django.contrib.auth.models import User
 
 class CustomUserCreationForm(MixinStyleForm, UserCreationForm):
-    print("Authentication Form Loaded ✅")
+    print("User Creation Form Loaded ✅")
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -15,4 +15,7 @@ class CustomUserCreationForm(MixinStyleForm, UserCreationForm):
 
 
 class CustomAuthenticationForm(MixinStyleForm, AuthenticationForm):
-    pass
+    print("Authentication Form Loaded ✅")
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
