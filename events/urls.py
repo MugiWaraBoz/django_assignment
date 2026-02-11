@@ -1,4 +1,3 @@
-from django.contrib import admin
 from django.urls import path, include
 from events.views import dashboard, event_details,event_form, delete_event, edit_event
 from django.conf import settings

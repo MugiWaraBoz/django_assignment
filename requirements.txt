@@ -8,6 +8,7 @@ Faker==40.1.2
 pillow==12.1.0
 psycopg-binary==3.3.2
 psycopg2-binary==2.9.11
+python-decouple==3.8
 semver==3.0.4
 shellingham==1.5.4
 sqlparse==0.5.5

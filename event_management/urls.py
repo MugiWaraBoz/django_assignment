@@ -2,11 +2,16 @@ from django.contrib import admin
 from django.urls import include, path
 from django.conf import settings
 from django.conf.urls.static import static
+from debug_toolbar.toolbar import debug_toolbar_urls
 
 urlpatterns = [
+    path('admin/', admin.site.urls),
     path('', include('events.urls')),
+    path('user/', include('user.urls')),
 ]
 
 # Serve media files in development
-if settings.DEBUG or True:  # Serve media regardless of DEBUG for development
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+if settings.DEBUG:  # Serve media regardless of DEBUG for development
+    urlpatterns += debug_toolbar_urls()
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
