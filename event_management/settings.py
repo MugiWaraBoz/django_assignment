@@ -95,7 +95,7 @@ DATABASES = {
         'PORT': config('PORT', cast=int),
     }
 }
-print(config('PASSWORD'))
+
 # DATABASES = {
 #     'default': dj_database_url.config(
 #         default='postgresql://event_manager_db_63ji_user:LuEBbfIhLZcH9RDIhol86WL7oxMTOy0u@dpg-d60bcucr85hc739e6vl0-a.oregon-postgres.render.com/event_manager_db_63ji',

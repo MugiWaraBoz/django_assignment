@@ -4,6 +4,10 @@ from events.models import Participant,Event,Category
 
 class MixinStyleForm:
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.apply_styles()
+
     default_class = "border border-slate-700/40 bg-slate-800/50 backdrop-blur-sm text-slate-100 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 m-2 focus:bg-slate-800/70 transition-colors"
 
     def apply_styles(self):
@@ -26,7 +30,7 @@ class MixinStyleForm:
                         "class": self.default_class,
                     }
                 )
-            elif isinstance(field.widget, (forms.Textarea, forms.TextInput)):
+            elif isinstance(field.widget, (forms.Textarea, forms.TextInput, forms.EmailInput, forms.PasswordInput)):
                 field.widget.attrs.update(
                     {
                         "class": self.default_class+" w-full",
@@ -55,7 +59,5 @@ class EventModelForm(MixinStyleForm,forms.ModelForm):
             "participants" : forms.CheckboxSelectMultiple(),
         }
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.apply_styles()
+
 

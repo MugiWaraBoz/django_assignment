@@ -1,9 +1,10 @@
 from datetime import date
 from django.shortcuts import render, redirect
-from events.models import Participant,Event,Category
-from events.forms import EventModelForm
 from django.db.models import Count, Q
 from django.contrib import messages
+
+from events.models import Participant,Event,Category
+from events.forms import EventModelForm
 
 # Create your views here.
 def dashboard(request):
