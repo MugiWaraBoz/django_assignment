@@ -9,7 +9,7 @@
 - [✅] Image issue
 - [✅] Filters
 - [✅] Searching
-- [] .env file setup
+- [✅] .env file setup
 - [] User Authentication (signIN, signUP, logOUT)
 - [] Update Database (User = Participent)
 - [] RBAC (decorate functions)
@@ -28,3 +28,4 @@
   - [] Admin
   - [] Organizer
   - [] Participant
+- [] SQL Optimization
