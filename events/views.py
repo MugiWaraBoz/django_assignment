@@ -78,7 +78,7 @@ def event_details(request, event_id):
 
     return render(request, "event-details.html", context)
 
-@login_required
+@login_required(login_url="error-404")
 @user_passes_test(lambda u: is_admin(u) or is_manager(u), login_url="home")
 def event_form(request):
     form = EventModelForm()
@@ -100,7 +100,7 @@ def event_form(request):
 
     return render(request, "event-form.html", context)
 
-@login_required
+@login_required(login_url="error-404")
 @user_passes_test(lambda u: is_admin(u) or is_manager(u), login_url="home")
 def edit_event(request, event_id):
     event = Event.objects.get(id=event_id)
@@ -121,7 +121,7 @@ def edit_event(request, event_id):
     }
     return render(request, "event-form.html", context)
 
-@login_required
+@login_required(login_url="error-404")
 @user_passes_test(lambda u: is_admin(u) or is_manager(u), login_url="home")
 def delete_event(request, event_id):
 

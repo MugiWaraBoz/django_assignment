@@ -40,7 +40,7 @@
                     </div>
                 </div>
                 {% if user.is_authenticated %}
-                {% for participant in event.participants %}
+                {% for participant in event.participants.all %}
                     <span class="inline-block bg-blue-500/50 backdrop-blur-sm text-white px-3 py-1 rounded-full mr-2 mb-2">{{ participant.username }}</span>
                 {% endfor %}
                 {% else %}
