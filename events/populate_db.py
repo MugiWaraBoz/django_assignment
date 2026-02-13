@@ -1,4 +1,5 @@
 import os
+import random
 import django
 from faker import Faker
 
@@ -7,22 +8,13 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "django_assignment.settings")
 django.setup()
 
 # ---- Import your models ----
-from events.models import Participant, Category
+from django.contrib.auth.models import User
+from events.models import Category, Event
 
 # ---- Initialize Faker ----
 fake = Faker()
 
-# ---- Generate 50 fake participants ----
-for _ in range(50):
-    name = fake.name()
-    email = fake.unique.email()
-    
-    # Create and save participant
-    Participant.objects.create(name=name, email=email)
-
-print("✅ 50 fake participants created successfully!")
-
-# ---- Generate fake categories ----
+# ---- Generate fake categories (skip if already exists) ----
 categories_data = [
     ("Technology", "Events related to technology, programming, and innovation"),
     ("Sports", "Athletic events, competitions, and sports activities"),
@@ -34,7 +26,47 @@ categories_data = [
     ("Entertainment", "Comedy shows, movie screenings, and entertainment events"),
 ]
 
-for name, description in categories_data:
-    Category.objects.create(name=name, description=description)
+if Category.objects.exists():
+    print("ℹ️  Categories already exist. Skipping category creation.")
+else:
+    for name, description in categories_data:
+        Category.objects.create(name=name, description=description)
 
-print("✅ 8 fake categories created successfully!")
+    print("✅ 8 fake categories created successfully!")
+
+# ---- Generate fake users ----
+users = []
+for _ in range(20):
+    full_name = fake.name()
+    email = fake.unique.email()
+    username = email.split("@")[0]
+
+    user = User.objects.create_user(
+        username=username,
+        email=email,
+        password="Password123!"
+    )
+    user.first_name = full_name.split(" ")[0]
+    user.last_name = " ".join(full_name.split(" ")[1:])
+    user.save()
+    users.append(user)
+
+print("✅ 20 fake users created successfully!")
+
+# ---- Generate fake events ----
+categories = list(Category.objects.all())
+for _ in range(15):
+    event = Event.objects.create(
+        name=fake.sentence(nb_words=4).rstrip("."),
+        description=fake.paragraph(nb_sentences=3),
+        location=fake.city(),
+        date=fake.date_between(start_date="-30d", end_date="+60d"),
+        time=fake.time(),
+        category=random.choice(categories),
+    )
+
+    # add random participants
+    participant_count = random.randint(3, 10)
+    event.participants.add(*random.sample(users, k=participant_count))
+
+print("✅ 15 fake events created successfully!")

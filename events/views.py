@@ -35,7 +35,7 @@ def dashboard(request):
         Today_events = Count('id',filter=Q(date=current_date)),
         upcoming_events = Count('id', filter=Q(date__gt=current_date), distinct=True),
         past_events = Count('id', filter=Q(date__lt=current_date), distinct=True),
-        participants_cnt = Count('participants__id'),
+        participants_cnt = Count('participants__id', distinct=True),
     )
 
     if filter_events == "Upcoming Events":
