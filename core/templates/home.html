@@ -1,0 +1,24 @@
+{% extends "template.html" %}
+{% block title %}Home{% endblock title %}
+{% block content %}
+    <h1 class="p-5"> WELCOME URAURARUARUARUARUARU </h1>
+    {% if user.is_authenticated %}
+        <form method="POST" action="{% url "sign-out" %}">
+            {% csrf_token %}
+            <button class="bg-blue-500 p-5 mb-5 cursor-pointer"> LOG OUT </button>
+        </form>
+    {% else %}
+        <h1> BRUUHH </h1>
+        
+        <form method="POST" action="{% url "sign-in" %}">
+            {% csrf_token %}
+            <button class="bg-blue-500 p-5 mb-5 cursor-pointer"> LOG IN </button>
+        </form>
+
+        <form method="POST" action="{% url "sign-up" %}">
+            {% csrf_token %}
+            <button class="bg-blue-500 p-5 cursor-pointer"> Register </button>
+        </form>
+        
+        {% endif %}
+{% endblock %}

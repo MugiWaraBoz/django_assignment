@@ -12,10 +12,10 @@
 - [✅] .env file setup
 - [✅] User Authentication (signIN, signUP, logOUT)
 - [✅] Update Database (User = Participent)
-- [] RBAC (decorate functions)
-  - [] Admin
-  - [] Organizer
-  - [] Participant
+- [✅] RBAC (decorate functions)
+  - [✅] Admin
+  - [✅] Organizer
+  - [✅] Participant
 - [] RSVP (Response to event)
 - [] Models and relation placed
 - [] user can join events

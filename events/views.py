@@ -2,9 +2,23 @@ from datetime import date
 from django.shortcuts import render, redirect
 from django.db.models import Count, Q
 from django.contrib import messages
+from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required, user_passes_test
 
 from events.models import Event,Category
 from events.forms import EventModelForm
+
+
+# Checks
+def is_admin(u):
+    return u.groups.filter(name="Admin").exists()
+
+def is_manager(u):
+    return u.groups.filter(name="Manager").exists()
+
+def participants(u):
+    return u.groups.filter(name="Participants").exists()
+
 
 # Create your views here.
 def dashboard(request):
@@ -53,6 +67,7 @@ def dashboard(request):
     
     return render(request, 'dashboard.html', context)
 
+
 def event_details(request, event_id):
     event = Event.objects.prefetch_related('participants').get(id=event_id)
 
@@ -63,7 +78,8 @@ def event_details(request, event_id):
 
     return render(request, "event-details.html", context)
 
-
+@login_required
+@user_passes_test(lambda u: is_admin(u) or is_manager(u), login_url="home")
 def event_form(request):
     form = EventModelForm()
 
@@ -84,6 +100,8 @@ def event_form(request):
 
     return render(request, "event-form.html", context)
 
+@login_required
+@user_passes_test(lambda u: is_admin(u) or is_manager(u), login_url="home")
 def edit_event(request, event_id):
     event = Event.objects.get(id=event_id)
     form = EventModelForm(instance=event)
@@ -103,8 +121,8 @@ def edit_event(request, event_id):
     }
     return render(request, "event-form.html", context)
 
-
-
+@login_required
+@user_passes_test(lambda u: is_admin(u) or is_manager(u), login_url="home")
 def delete_event(request, event_id):
 
     next_url = request.GET.get('next', 'dashboard')

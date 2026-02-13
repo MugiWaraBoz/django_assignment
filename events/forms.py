@@ -80,7 +80,6 @@ class EventModelForm(MixinStyleForm,forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if 'participants' in self.fields:
-            self.fields['participants'].queryset = User.objects.filter(is_superuser=False)
-
+            self.fields['participants'].queryset = User.objects.filter(groups__name__in=["Participants"])
 
             

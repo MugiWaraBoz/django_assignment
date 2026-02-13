@@ -139,8 +139,12 @@
                 <p class="my-2 text-slate-300">Time: {{event.time}}</p>
                 <p class="my-2 text-slate-300">Location: {{event.location}}</p>
                 <div class="my-4">
+                    {% if perms.events.change_event %}
                     <a href="{% url 'edit-event' event.id %}" class="hover:shadow-lg bg-gradient-to-r from-blue-500/70 to-cyan-500/70 hover:from-blue-600/90 hover:to-cyan-600/90 backdrop-blur-sm text-white font-bold py-2 px-4 rounded-full mr-2 transition-all duration-200 shadow-md">Edit</a>
+                    {% endif %}
+                    {% if perms.events.delete_event %}
                     <a href="{% url 'delete-event' event.id %}?next={{ request.get_full_path }}" class="hover:shadow-lg bg-gradient-to-r from-red-500/70 to-pink-500/70 hover:from-red-600/90 hover:to-pink-600/90 backdrop-blur-sm text-white font-bold py-2 px-4 rounded-full transition-all duration-200 shadow-md">Delete</a>
+                    {% endif %}
                 </div>
                 </div>
                 <div>
