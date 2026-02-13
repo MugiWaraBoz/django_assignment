@@ -11,7 +11,7 @@
 - [✅] Searching
 - [✅] .env file setup
 - [✅] User Authentication (signIN, signUP, logOUT)
-- [] Update Database (User = Participent)
+- [✅] Update Database (User = Participent)
 - [] RBAC (decorate functions)
   - [] Admin
   - [] Organizer

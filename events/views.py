@@ -106,6 +106,9 @@ def edit_event(request, event_id):
 
 
 def delete_event(request, event_id):
+
+    next_url = request.GET.get('next', 'dashboard')
+
     try:
         event = Event.objects.get(id=event_id)
         event.delete()
@@ -113,4 +116,5 @@ def delete_event(request, event_id):
     except Event.DoesNotExist:
         messages.error(request, "Event not found.")
 
-    return redirect('dashboard')
+    print(next_url)
+    return redirect(next_url)

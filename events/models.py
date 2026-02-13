@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django.contrib.auth.models import User
 
 # Create your models here.
 class Participant(models.Model):
@@ -24,7 +25,8 @@ class Event(models.Model):
         related_name = "events")
 
     participants = models.ManyToManyField(
-        "Participant",
+        User,
+        # "Participant",
         related_name = "events")
 
     def __str__(self):

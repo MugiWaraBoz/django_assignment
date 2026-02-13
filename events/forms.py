@@ -1,5 +1,7 @@
 from django import forms
 from events.models import Participant,Event,Category
+from django.contrib.auth.models import User
+
 
 
 class MixinStyleForm:
@@ -74,6 +76,11 @@ class EventModelForm(MixinStyleForm,forms.ModelForm):
             "image" : forms.ClearableFileInput(),
             "participants" : forms.CheckboxSelectMultiple(),
         }
+        
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if 'participants' in self.fields:
+            self.fields['participants'].queryset = User.objects.filter(is_superuser=False)
 
 
-
+            
