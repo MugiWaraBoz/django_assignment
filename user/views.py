@@ -9,7 +9,7 @@ from django.contrib.auth import authenticate, login, logout
 from datetime import date
 
 from events.models import Participant,Event,Category
-from user.forms import CustomUserCreationForm, CustomAuthenticationForm
+from user.forms import CustomUserCreationForm, CustomAuthenticationForm, userCreationForm
 
 # Create your views here.
 def sign_in(request):
@@ -33,19 +33,27 @@ def sign_in(request):
     return render(request, 'registration/sign-in.html', context)
 
 def sign_up(request):
-    form = CustomUserCreationForm()
+    form = userCreationForm()
 
     if request.method == "POST":
-        form = CustomUserCreationForm(request.POST)
+        form = userCreationForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
-            messages.success(request, "Account Created Successfully")
-            return redirect("dashboard")
+            username = form.cleaned_data.get("username")
+            user = form.save(commit=False)
 
+            user.set_password(form.cleaned_data.get("password"))
+            
+            user.save()
+            messages.success(request, f"Account created for {username}!")
+            return redirect('dashboard')
+        else:
+            messages.error(request, "Registration failed. Please correct the errors below.")
+    
     context = {
         'form' : form,
     }
     return render(request, 'registration/sign-up.html', context)
+
 
 def sign_out(request):
     messages.success(request, "Log Out Successfully")
