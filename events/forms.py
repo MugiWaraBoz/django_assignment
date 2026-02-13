@@ -8,7 +8,7 @@ class MixinStyleForm:
         super().__init__(*args, **kwargs)
         self.apply_styles()
 
-    default_class = "border border-slate-700/40 bg-slate-800/50 backdrop-blur-sm text-slate-100 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 m-2 focus:bg-slate-800/70 transition-colors"
+    default_class = "border border-slate-700/40 bg-slate-800/50 backdrop-blur-sm text-slate-100 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3 m-2 focus:bg-slate-800/70 transition-colors"
 
     def apply_styles(self):
         for field_name, field in self.fields.items():
@@ -20,7 +20,7 @@ class MixinStyleForm:
                 # 1. Special case: first_name field (custom width)
                 if field_name == "first_name" or field_name == "last_name":
                     field.widget.attrs.update({
-                        "class": f"{base_class} w-full lg:w-1/3"
+                        "class": f"{base_class} w-full lg:w-2/5"
                     })
 
                 # 2. Multi-select checkboxes
