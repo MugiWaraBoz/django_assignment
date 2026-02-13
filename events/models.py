@@ -3,13 +3,13 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import User
 
 # Create your models here.
-class Participant(models.Model):
+# class Participant(models.Model):
 
-    name = models.CharField(max_length=50)
-    email = models.EmailField(max_length=254)
+#     name = models.CharField(max_length=50)
+#     email = models.EmailField(max_length=254)
 
-    def __str__(self):
-        return self.name
+#     def __str__(self):
+#         return self.name
 
 class Event(models.Model):
 

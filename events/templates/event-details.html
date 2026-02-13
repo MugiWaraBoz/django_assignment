@@ -1,4 +1,5 @@
 {% extends "template.html" %}
+{% block title %}{{ event.name }}{% endblock title %}
 {% block content %}
     <div class="">
         <div>
@@ -39,7 +40,7 @@
                     </div>
                 </div>
                 {% for participant in event.participants.all %}
-                    <span class="inline-block bg-blue-500/50 backdrop-blur-sm text-white px-3 py-1 rounded-full mr-2 mb-2">{{ participant.name }}</span>
+                    <span class="inline-block bg-blue-500/50 backdrop-blur-sm text-white px-3 py-1 rounded-full mr-2 mb-2">{{ participant.username }}</span>
                 {% endfor %}
             </div>
 

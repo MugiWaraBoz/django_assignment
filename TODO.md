@@ -21,9 +21,9 @@
 - [] user can join events
 - [] user can view events
 - [] Confirmation (Email Auth)
-- [] User signUP confermation
+  - [] User signUP confermation
   - [] User RSVP confermation
-- [] image field fix
+- [✅] image field fix
 - [] User-Specific Dashboard (UI)
   - [] Admin
   - [] Organizer

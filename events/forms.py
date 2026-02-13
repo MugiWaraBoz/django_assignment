@@ -1,5 +1,5 @@
 from django import forms
-from events.models import Participant,Event,Category
+from events.models import Event,Category
 from django.contrib.auth.models import User
 
 

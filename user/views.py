@@ -7,7 +7,7 @@ from django.contrib.auth import authenticate, login, logout
 
 from datetime import date
 
-from events.models import Participant,Event,Category
+from events.models import Event,Category
 from user.forms import CustomAuthenticationForm, userCreationForm
 
 # Create your views here.
