@@ -29,7 +29,6 @@
             </ul>
         </div>
 
-
         <div class="bg-slate-900/60 backdrop-blur-lg m-4 p-4 shadow-lg rounded-xl border border-slate-700/40">
             <ul class="list-style-none flex justify-between gap-4 m-0 p-0 text-slate-300">
                 <button id="mobile-menu-button" class="md:hidden flex items-center justify-center">
@@ -53,6 +52,18 @@
                 </a>
             </ul> 
         </div>
+
+        {% if messages %}
+        <ul class="messages col-span-2 text-center mb-4">
+            {% for message in messages %}
+            <li class=" text-white 
+            {% if message.tags == "error" %}p-4 bg-red-600/50 backdrop-blur-lg border border-red-400/40 rounded-lg{% endif %}
+            {% if message.tags == "success" %}p-4 bg-green-600/50 backdrop-blur-lg border border-green-400/40 rounded-lg{% endif %}
+            {% if message.tags == "info" %}p-4 bg-slate-800/70 backdrop-blur-lg border border-slate-700/40 rounded-lg{% endif %}">
+            {{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
 
         <div class="md:w-full min-h-dvh lg:max-w-[1440px] justify-self-center p-5 h-auto mx-auto">
         {% block content %}

@@ -3,34 +3,31 @@ from django.shortcuts import render, redirect
 from django.db.models import Count, Q
 from django.contrib import messages
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth import authenticate, login, logout
 
 from datetime import date
 
 from events.models import Participant,Event,Category
-from user.forms import CustomUserCreationForm, CustomAuthenticationForm, userCreationForm
+from user.forms import CustomAuthenticationForm, userCreationForm
 
 # Create your views here.
 def sign_in(request):
     form = CustomAuthenticationForm()
     if request.method == "POST":
-        form = CustomAuthenticationForm(request, data=request.POST)
+        form = CustomAuthenticationForm(request.POST)
         if form.is_valid():
-            print(form)
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
-
-            user = authenticate(request, username = username, password = password)
+            user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
                 messages.success(request, f"Logged in {username}")
                 return redirect("dashboard")
+            else:
+                messages.error(request, "Invalid username or password")
+                return render(request, "registration/sign-in.html", {'form' : form})
             
-    context = {
-        'form' : form,
-    }
-    return render(request, 'registration/sign-in.html', context)
+    return render(request, "registration/sign-in.html", {'form' : form})
 
 def sign_up(request):
     form = userCreationForm()
