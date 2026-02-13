@@ -17,8 +17,11 @@
   - [✅] Organizer
   - [✅] Participant
 - [] RSVP (Response to event)
+  - [] Database Model Created/Configured
+  - [] Connections Between Models Configured
+  - [] basic UI updated
 - [] Models and relation placed
-- [] user can join events
+- [✅] user can join events
 - [] user can view events
 - [] Confirmation (Email Auth)
   - [] User signUP confermation
@@ -28,4 +31,6 @@
   - [] Admin
   - [] Organizer
   - [] Participant
+  - [] Navbar Updated
+- [] Website UI resposive
 - [] SQL Optimization
