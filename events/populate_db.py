@@ -22,8 +22,9 @@ image_paths = []
 
 media_images_dir = os.path.join(settings.MEDIA_ROOT, "event_images")
 events_images_dir = os.path.join(os.path.dirname(__file__), "images")
+demo_images_dir = os.path.join(settings.BASE_DIR, "demo_images")
 
-for image_dir in [media_images_dir, events_images_dir]:
+for image_dir in [media_images_dir, events_images_dir, demo_images_dir]:
     if os.path.isdir(image_dir):
         for filename in os.listdir(image_dir):
             ext = os.path.splitext(filename)[1].lower()

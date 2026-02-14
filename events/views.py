@@ -30,7 +30,8 @@ def dashboard(request):
     search_query = request.GET.get('search')
     
     has_rsvp = RSVP.objects.select_related('event', 'participants')
-    rsvped_event_ids = has_rsvp.filter(participants = request.user, is_going=True).values_list('event_id', flat=True)
+    if request.user.is_authenticated:
+        rsvped_event_ids = has_rsvp.filter(participants = request.user, is_going=True).values_list('event_id', flat=True)
     # print(rsvped_event_ids)
 
 
@@ -42,8 +43,9 @@ def dashboard(request):
     )
     
     # Total Participation count
+    
     participants_cnt = has_rsvp.filter(is_going=True).aggregate(total_participants=Count('participants', distinct=True))['total_participants']
-    print(participants_cnt, "---===")
+    # print(participants_cnt, "---===")
 
     if filter_events == "Upcoming Events":
         events = events.filter(date__gt=current_date)
@@ -67,9 +69,10 @@ def dashboard(request):
         "participants_cnt" : participants_cnt,
         "filter_events": filter_events,
         "search_query": search_query,
-        "rsvped_event_ids": rsvped_event_ids
-
     }
+
+    if request.user.is_authenticated:
+        context["rsvped_event_ids"] = rsvped_event_ids
     # print(events.values_list())
 
     if not events.exists():
@@ -160,7 +163,7 @@ def rsvp_event(request, event_id):
 
     if event.date < current_date:
         messages.error(request, "Event ended")
-    elif not rsvp_ins.filter(event__id=event_id, participants_id=request.user.id).exists():
+    elif not rsvp_ins.filter(event__id=event_id, participants=request.user).exists():
         RSVP.objects.create(event = event, participants = request.user)
         messages.success(request, "Successfully RSVP the event")
     else :
@@ -173,7 +176,7 @@ def rsvp_event(request, event_id):
 def rsvp_removed(request, event_id):
     next_url = request.GET.get('next', 'dashboard')
 
-    rsvp_ins = RSVP.objects.select_related('event', 'participants').filter(event__id=event_id, participants_id=request.user.id)
+    rsvp_ins = RSVP.objects.select_related('event', 'participants').filter(event__id=event_id, participants=request.user)
     if rsvp_ins.exists():
         rsvp_ins.delete()
         messages.success(request, "RSVP Removed") 
