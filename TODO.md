@@ -5,7 +5,7 @@
 - [✅] Dashboard page
 - [✅] Details page
 - [✅] Forms
-- [✅] SQL optimization
+- [✅] SQL optimization (old)
 - [✅] Image issue
 - [✅] Filters
 - [✅] Searching
@@ -19,10 +19,10 @@
 - [] RSVP (Response to event)
   - [] Database Model Created/Configured
   - [] Connections Between Models Configured
-  - [] basic UI updated
+  - [✅] basic UI updated
 - [] Models and relation placed
-- [✅] user can join events
-- [] user can view events
+- [] user can join events
+- [✅] user can view events
 - [] Confirmation (Email Auth)
   - [] User signUP confermation
   - [] User RSVP confermation
