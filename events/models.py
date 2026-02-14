@@ -11,6 +11,7 @@ from django.contrib.auth.models import User
 #     def __str__(self):
 #         return self.name
 
+
 class Event(models.Model):
 
     name = models.CharField(max_length=50)
@@ -39,6 +40,8 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+
+
 class RSVP(models.Model):
 
     event = models.ForeignKey(
@@ -52,11 +55,6 @@ class RSVP(models.Model):
         on_delete=models.CASCADE,
         related_name = "rsvp",
     )
-
-    # choices = {
-    #     "Going" : "G",
-    #     "Not Going" : "NG"
-    # }
 
     is_going = models.BooleanField(default=True)
 

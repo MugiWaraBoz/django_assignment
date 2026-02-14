@@ -4,6 +4,7 @@ from django.db.models import Count, Q
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required, user_passes_test, login_not_required
 
 from datetime import date
 
@@ -11,6 +12,7 @@ from events.models import Event,Category
 from user.forms import CustomAuthenticationForm, userCreationForm
 
 # Create your views here.
+@login_not_required
 def sign_in(request):
     form = CustomAuthenticationForm()
     if request.method == "POST":
@@ -29,6 +31,7 @@ def sign_in(request):
             
     return render(request, "registration/sign-in.html", {'form' : form})
 
+@login_not_required
 def sign_up(request):
     form = userCreationForm()
 
@@ -51,7 +54,7 @@ def sign_up(request):
     }
     return render(request, 'registration/sign-up.html', context)
 
-
+@login_required(login_url="home")
 def sign_out(request):
     messages.success(request, "Log Out Successfully")
     logout(request)
