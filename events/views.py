@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required, user_passes_test
 
-from events.models import Event,Category
+from events.models import Event,Category,RSVP
 from events.forms import EventModelForm
 
 
@@ -28,6 +28,10 @@ def dashboard(request):
     category_id = request.GET.get('category')
     filter_events = request.GET.get('filter_events')
     search_query = request.GET.get('search')
+    
+    has_rsvp = RSVP.objects.select_related('event', 'participants').filter(participants = request.user, is_going=True)
+    rsvped_event_ids = has_rsvp.values_list('event_id', flat=True)
+    print(rsvped_event_ids)
 
 
     count = events.aggregate(        
@@ -59,6 +63,7 @@ def dashboard(request):
         "count": count,
         "filter_events": filter_events,
         "search_query": search_query,
+        "rsvped_event_ids": rsvped_event_ids
 
     }
 
@@ -124,7 +129,9 @@ def edit_event(request, event_id):
 @login_required(login_url="error-404")
 @user_passes_test(lambda u: is_admin(u) or is_manager(u), login_url="home")
 def delete_event(request, event_id):
-
+    """
+    next_url places the current active url after deletion
+    """
     next_url = request.GET.get('next', 'dashboard')
 
     try:
@@ -134,5 +141,36 @@ def delete_event(request, event_id):
     except Event.DoesNotExist:
         messages.error(request, "Event not found.")
 
-    print(next_url)
+    # print(next_url)
+    return redirect(next_url)
+
+
+@login_required(login_url="error-404")
+def rsvp_event(request, event_id):
+
+    next_url = request.GET.get('next', 'dashboard')
+
+    event = Event.objects.get(id=event_id)
+    rsvp_ins = RSVP.objects.select_related('event', 'participants')
+
+    if not rsvp_ins.filter(event__id=event_id, participants_id=request.user.id).exists():
+        RSVP.objects.create(event = event, participants = request.user)
+        messages.success(request, "Successfully RSVP the event")
+    else :
+        messages.error(request, "Already participating this event")
+
+    return redirect(next_url)
+
+
+@login_required(login_url="error-404")
+def rsvp_removed(request, event_id):
+    next_url = request.GET.get('next', 'dashboard')
+
+    rsvp_ins = RSVP.objects.select_related('event', 'participants').filter(event__id=event_id, participants_id=request.user.id)
+    if rsvp_ins.exists():
+        rsvp_ins.delete()
+        messages.success(request, "RSVP Removed") 
+    else :
+        messages.error(request, "Not yet RSVP")
+
     return redirect(next_url)
