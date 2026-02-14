@@ -39,6 +39,27 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+class RSVP(models.Model):
 
+    event = models.ForeignKey(
+        "Event",
+        on_delete=models.CASCADE,
+        related_name="rsvp"
+    )
 
+    participants = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name = "rsvp",
+    )
+
+    # choices = {
+    #     "Going" : "G",
+    #     "Not Going" : "NG"
+    # }
+
+    is_going = models.BooleanField(default=True)
+
+    def __str__(self):
+        return super().__str__()
 
