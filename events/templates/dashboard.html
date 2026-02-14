@@ -22,7 +22,7 @@
         <div class="h-auto grid grid-cols-2 bg-slate-800/50 backdrop-blur-lg p-4 rounded-xl border border-slate-700/40 text-slate-100 items-center">
             <div>
                 <p class="font-bold text-sm text-center mb-1 text-slate-300">Total<br>Participants</p>
-                <p class="text-5xl text-center text-blue-400">{{ count.participants_cnt }}</p>
+                <p class="text-5xl text-center text-blue-400">{{ participants_cnt }}</p>
             </div>
             <div class="justify-self-center h-20 w-20 p-3 bg-blue-500/20 backdrop-blur-sm rounded-full flex items-center justify-center">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-10 text-blue-400">
@@ -150,13 +150,13 @@
 
                     {% if perms.events.delete_event %}
                         {% comment %} Delete Button Button {% endcomment %}
-                        <a href="{% url 'delete-event' event.id %}?next={{ request.get_full_path }}" class="hover:shadow-lg bg-gradient-to-r from-red-500/70 to-pink-500/70 hover:from-red-600/90 hover:to-pink-600/90 backdrop-blur-sm text-white font-bold py-2 px-4 rounded-full transition duration-200 shadow-md">Delete</a>
+                        <a href="{% url 'delete-event' event.id %}?next={{ request.get_full_path|urlencode  }}" class="hover:shadow-lg bg-gradient-to-r from-red-500/70 to-pink-500/70 hover:from-red-600/90 hover:to-pink-600/90 backdrop-blur-sm text-white font-bold py-2 px-4 rounded-full transition duration-200 shadow-md">Delete</a>
                     {% endif %}
 
                     {% comment %} RSVP Button {% endcomment %}
                     {% if event.id in rsvped_event_ids%}
                     {% comment %} Going Button {% endcomment %}
-                    <a href="{% url 'rsvp_r' event.id %}?next={{ request.get_full_path }}" class="hover:shadow-lg bg-gradient-to-r from-green-500/70 to-emerald-500/70 hover:from-green-600/90 hover:to-emerald-600/90 backdrop-blur-sm text-white mt-5 font-bold py-2 px-4 rounded-full transition-all duration-200 shadow-md flex justify-between">
+                    <a href="{% url 'rsvp_r' event.id %}?next={{ request.get_full_path|urlencode  }}" class="hover:shadow-lg bg-gradient-to-r from-green-500/70 to-emerald-500/70 hover:from-green-600/90 hover:to-emerald-600/90 backdrop-blur-sm text-white mt-5 font-bold py-2 px-4 rounded-full transition-all duration-200 shadow-md flex justify-between">
                         Going
                         <span>
                             <svg    xmlns="http://www.w3.org/2000/svg" 
@@ -173,7 +173,7 @@
                         </span>
                     </a>       
                     {% else %}
-                    <a href="{% url 'rsvp' event.id %}?next={{ request.get_full_path }}" class="hover:shadow-lg bg-gradient-to-r from-red-500/70 to-pink-500/70 hover:from-red-600/90 hover:to-pink-600/90 backdrop-blur-sm text-white font-bold mt-5 py-2 px-4 rounded-full transition duration-200 shadow-md flex justify-between">
+                    <a href="{% url 'rsvp' event.id %}?next={{ request.get_full_path|urlencode  }}" class="hover:shadow-lg bg-gradient-to-r from-red-500/70 to-pink-500/70 hover:from-red-600/90 hover:to-pink-600/90 backdrop-blur-sm text-white font-bold mt-5 py-2 px-4 rounded-full transition duration-200 shadow-md flex justify-between">
                         RSVP
                         <span>
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" 
@@ -207,7 +207,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM3 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 9.374 21c-2.331 0-4.512-.645-6.374-1.766Z" />
                             </svg>
                         </div>
-                        <p class="text-slate-300"><span class="font-bold text-slate-100">{{ event.participants.count }}</span> People</p>
+                        <p class="text-slate-300"><span class="font-bold text-slate-100">{{ event.rsvp.count }}</span> People</p>
                     </div>
                 </div>
             </div>

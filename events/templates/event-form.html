@@ -32,7 +32,7 @@
                 {% endfor %}
 
                 {% comment %} CheckboxSelectMultiple {% endcomment %}
-                <div class="col-span-2">
+                {% comment %} <div class="col-span-2">
                     <label class="block m-2 font-medium text-slate-200 text-2xl">Participants :</label>
                     <div class="flex flex-wrap lg:flex-row sm:flex-col gap-3 p-4 bg-slate-800/50 backdrop-blur-lg border border-slate-700/40 rounded-lg">
                         {% for checkbox in form.participants %}
@@ -42,7 +42,7 @@
                         </div>
                         {% endfor %}
                     </div>
-                </div>
+                </div> {% endcomment %}
 
                 <button action="submit" class="w-full bg-gradient-to-r from-blue-500/70 to-indigo-500/70 hover:from-blue-600/90 hover:to-indigo-600/90 backdrop-blur-sm text-white font-bold m-3 py-2 px-4 rounded-full cursor-pointer shadow-lg transition-all duration-200"> Submit </button>
             </form>

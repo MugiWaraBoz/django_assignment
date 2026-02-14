@@ -22,16 +22,16 @@ def participants(u):
 
 # Create your views here.
 def dashboard(request):
-    events = Event.objects.all().select_related('category').prefetch_related('participants')
+    events = Event.objects.all().select_related('category').prefetch_related('rsvp__participants')
     categories = Category.objects.all()
     current_date = date.today()
     category_id = request.GET.get('category')
     filter_events = request.GET.get('filter_events')
     search_query = request.GET.get('search')
     
-    has_rsvp = RSVP.objects.select_related('event', 'participants').filter(participants = request.user, is_going=True)
-    rsvped_event_ids = has_rsvp.values_list('event_id', flat=True)
-    print(rsvped_event_ids)
+    has_rsvp = RSVP.objects.select_related('event', 'participants')
+    rsvped_event_ids = has_rsvp.filter(participants = request.user, is_going=True).values_list('event_id', flat=True)
+    # print(rsvped_event_ids)
 
 
     count = events.aggregate(        
@@ -39,8 +39,11 @@ def dashboard(request):
         Today_events = Count('id',filter=Q(date=current_date)),
         upcoming_events = Count('id', filter=Q(date__gt=current_date), distinct=True),
         past_events = Count('id', filter=Q(date__lt=current_date), distinct=True),
-        participants_cnt = Count('participants__id', distinct=True),
     )
+    
+    # Total Participation count
+    participants_cnt = has_rsvp.filter(is_going=True).aggregate(total_participants=Count('participants', distinct=True))['total_participants']
+    print(participants_cnt, "---===")
 
     if filter_events == "Upcoming Events":
         events = events.filter(date__gt=current_date)
@@ -61,11 +64,13 @@ def dashboard(request):
         "Events" : events,
         "categories": categories,
         "count": count,
+        "participants_cnt" : participants_cnt,
         "filter_events": filter_events,
         "search_query": search_query,
         "rsvped_event_ids": rsvped_event_ids
 
     }
+    # print(events.values_list())
 
     if not events.exists():
         messages.info(request, "No events found matching your criteria.")
@@ -74,11 +79,11 @@ def dashboard(request):
 
 
 def event_details(request, event_id):
-    event = Event.objects.prefetch_related('participants').get(id=event_id)
+    event = Event.objects.prefetch_related('rsvp__participants').get(id=event_id)
 
     context = {
         "event": event,
-        "count": event.participants.aggregate(participants_cnt=Count('id')),
+        "count": event.rsvp.aggregate(participants_cnt=Count('id')),
     }
 
     return render(request, "event-details.html", context)
@@ -149,11 +154,13 @@ def delete_event(request, event_id):
 def rsvp_event(request, event_id):
 
     next_url = request.GET.get('next', 'dashboard')
-
     event = Event.objects.get(id=event_id)
+    current_date = date.today()
     rsvp_ins = RSVP.objects.select_related('event', 'participants')
 
-    if not rsvp_ins.filter(event__id=event_id, participants_id=request.user.id).exists():
+    if event.date < current_date:
+        messages.error(request, "Event ended")
+    elif not rsvp_ins.filter(event__id=event_id, participants_id=request.user.id).exists():
         RSVP.objects.create(event = event, participants = request.user)
         messages.success(request, "Successfully RSVP the event")
     else :

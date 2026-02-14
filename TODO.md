@@ -16,10 +16,11 @@
   - [✅] Admin
   - [✅] Organizer
   - [✅] Participant
-- [] RSVP (Response to event)
-  - [] Database Model Created/Configured
-  - [] Connections Between Models Configured
+- [✅] RSVP (Response to event)
+  - [✅] Database Model Created/Configured
   - [✅] basic UI updated
+  - [✅] Connections Between Models Configured
+  - [✅] Connecting the whole participant through RSVP model/table
 - [] Models and relation placed
 - [] user can join events
 - [✅] user can view events

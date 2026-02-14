@@ -25,10 +25,10 @@ class Event(models.Model):
         on_delete=models.CASCADE,
         related_name = "events")
 
-    participants = models.ManyToManyField(
-        User,
-        # "Participant",
-        related_name = "events")
+    # participants = models.ManyToManyField(
+    #     User,
+    #     # "Participant",
+    #     related_name = "events")
 
     def __str__(self):
         return self.name

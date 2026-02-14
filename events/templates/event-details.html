@@ -40,9 +40,15 @@
                     </div>
                 </div>
                 {% if user.is_authenticated %}
-                {% for participant in event.participants.all %}
-                    <span class="inline-block bg-blue-500/50 backdrop-blur-sm text-white px-3 py-1 rounded-full mr-2 mb-2">{{ participant.username }}</span>
-                {% endfor %}
+                    {% if event.rsvp.all %}
+                        {% for rsvp in event.rsvp.all %}
+                            {% if rsvp.is_going %}
+                                <span class="inline-block bg-blue-500/50 backdrop-blur-sm text-white px-3 py-1 rounded-full mr-2 mb-2">{{ rsvp.participants.username }}</span>
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        <div class="w-full flex justify-center mt-6 bg-slate-800/50 backdrop-blur-lg p-4 rounded-lg border border-slate-700/40" ><span>No Participants</span></div>
+                    {% endif %}
                 {% else %}
                     <div class="w-full flex justify-center mt-6 bg-slate-800/50 backdrop-blur-lg p-4 rounded-lg border border-slate-700/40" ><span>Login to view Other Participants</span></div>
                 {% endif %}
