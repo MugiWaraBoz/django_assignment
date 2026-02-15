@@ -142,6 +142,13 @@ STATICFILES_DIRS = [
 	BASE_DIR / 'static',
 ]
 
+# EMAIL Config
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = config('MAIL')
+EMAIL_HOST_PASSWORD = config('PASSWORD')
 
 # for debug toolbar
 INTERNAL_IPS = [

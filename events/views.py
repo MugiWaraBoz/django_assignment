@@ -19,7 +19,6 @@ def is_Organizer(u):
 def participants(u):
     return u.groups.filter(name="Participants").exists()
 
-
 # Create your views here.
 def dashboard(request):
     events = Event.objects.all().select_related('category').prefetch_related('rsvp__participants')
@@ -79,7 +78,6 @@ def dashboard(request):
         messages.info(request, "No events found matching your criteria.")
     
     return render(request, 'dashboard.html', context)
-
 
 def event_details(request, event_id):
     event = Event.objects.prefetch_related('rsvp__participants').get(id=event_id)
