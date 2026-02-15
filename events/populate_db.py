@@ -8,7 +8,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "event_management.settings")
 django.setup()
 
 # ---- Import your models ----
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.core.files import File
 from django.conf import settings
 from events.models import Category, Event, RSVP
@@ -51,6 +51,10 @@ else:
 
     print("✅ 8 fake categories created successfully!")
 
+# ---- Ensure groups exist ----
+organizer_group, _ = Group.objects.get_or_create(name="Organizer")
+participant_group, _ = Group.objects.get_or_create(name="Participants")
+
 # ---- Generate fake users ----
 users = []
 for _ in range(20):
@@ -68,6 +72,18 @@ for _ in range(20):
     user.save()
     users.append(user)
 
+# ---- Assign users to groups ----
+random.shuffle(users)
+organizer_count = max(1, len(users) // 4)
+organizers = users[:organizer_count]
+participants = users[organizer_count:]
+
+for organizer in organizers:
+    organizer.groups.add(organizer_group)
+
+for participant in participants:
+    participant.groups.add(participant_group)
+
 print("✅ 20 fake users created successfully!")
 
 # ---- Generate fake events ----
@@ -82,15 +98,25 @@ for _ in range(15):
         category=random.choice(categories),
     )
 
+    # add random organizers (only users in Organizer group)
+    organizer_count = random.randint(1, 3)
+    organizer_pool = organizers if organizers else users
+    event.organizers.set(
+        random.sample(organizer_pool, k=min(organizer_count, len(organizer_pool)))
+    )
+
     # add random image if available
     if image_paths:
         image_path = random.choice(image_paths)
         with open(image_path, "rb") as image_file:
             event.image.save(os.path.basename(image_path), File(image_file), save=True)
 
-    # add random participants via RSVP
+    # add random participants via RSVP (prefer Participants group)
     participant_count = random.randint(3, 10)
-    for participant in random.sample(users, k=participant_count):
+    participant_pool = participants if participants else users
+    for participant in random.sample(
+        participant_pool, k=min(participant_count, len(participant_pool))
+    ):
         RSVP.objects.create(
             event=event,
             participants=participant,

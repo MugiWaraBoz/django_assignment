@@ -5,7 +5,11 @@
         <div>
             <h1 class="text-3xl font-bold mb-4 text-slate-100"> {{ event.name }} </h1>
             <p class="text-slate-300"><strong>Category:</strong> <span class="ml-2 bg-blue-500/50 backdrop-blur-sm p-2 rounded-full text-white">{{ event.category.name }}</span></p>
-            <p class="text-slate-300"><strong>Organizer:</strong> <span class="ml-2 bg-blue-500/50 backdrop-blur-sm p-2 rounded-full text-white">{{ event.organizers.name }}</span></p>
+            <p class="text-slate-300 mt-5"><strong>Organizer:</strong> 
+                {% for organizer in event.organizers.all %}
+                    <span class="ml-2 bg-blue-500/50 backdrop-blur-sm p-2 rounded-full text-white">{{organizer.get_full_name}}</span>
+                {% endfor %}
+            </p>
 
         </div>
         <div>
@@ -45,7 +49,7 @@
                     {% if event.rsvp.all %}
                         {% for rsvp in event.rsvp.all %}
                             {% if rsvp.is_going %}
-                                <span class="inline-block bg-blue-500/50 backdrop-blur-sm text-white px-3 py-1 rounded-full mr-2 mb-2">{{ rsvp.participants.username }}</span>
+                                <span class="inline-block bg-blue-500/50 backdrop-blur-sm text-white px-3 py-1 rounded-full mr-2 mb-2">{{ rsvp.participants.get_full_name }}</span>
                             {% endif %}
                         {% endfor %}
                     {% else %}
