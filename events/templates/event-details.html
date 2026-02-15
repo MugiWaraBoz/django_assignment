@@ -5,6 +5,8 @@
         <div>
             <h1 class="text-3xl font-bold mb-4 text-slate-100"> {{ event.name }} </h1>
             <p class="text-slate-300"><strong>Category:</strong> <span class="ml-2 bg-blue-500/50 backdrop-blur-sm p-2 rounded-full text-white">{{ event.category.name }}</span></p>
+            <p class="text-slate-300"><strong>Organizer:</strong> <span class="ml-2 bg-blue-500/50 backdrop-blur-sm p-2 rounded-full text-white">{{ event.organizers.name }}</span></p>
+
         </div>
         <div>
             <div class="grid md:grid-cols-1 lg:grid-cols-3 gap-4">

@@ -13,8 +13,8 @@ from events.forms import EventModelForm
 def is_admin(u):
     return u.groups.filter(name="Admin").exists()
 
-def is_manager(u):
-    return u.groups.filter(name="Manager").exists()
+def is_Organizer(u):
+    return u.groups.filter(name="Organizer").exists()
 
 def participants(u):
     return u.groups.filter(name="Participants").exists()
@@ -83,7 +83,6 @@ def dashboard(request):
 
 def event_details(request, event_id):
     event = Event.objects.prefetch_related('rsvp__participants').get(id=event_id)
-
     context = {
         "event": event,
         "count": event.rsvp.aggregate(participants_cnt=Count('id')),
@@ -92,50 +91,68 @@ def event_details(request, event_id):
     return render(request, "event-details.html", context)
 
 @login_required(login_url="error-404")
-@user_passes_test(lambda u: is_admin(u) or is_manager(u), login_url="home")
+@user_passes_test(lambda u: is_admin(u) or is_Organizer(u), login_url="home")
 def event_form(request):
     form = EventModelForm()
+    org_search_query = request.GET.get('search')
+    organizers = User.objects.filter(groups__name="Organizer")
 
+    if org_search_query:
+        organizers = organizers.filter(username__icontains=org_search_query)
+        
     if request.method == "POST":
         form = EventModelForm(request.POST, request.FILES)
+        form.fields["organizers"].queryset = organizers
         if form.is_valid():
             form.save()
             messages.success(request, "Event created successfully!")
             return redirect('dashboard')
         else:
             messages.error(request, "Something went wrong.")
-            
+    else :            
+        form.fields["organizers"].queryset = organizers
 
     context = {
         "form": form,
         "title": "Add a New Event",
+        "orgs": org_search_query
     }
 
     return render(request, "event-form.html", context)
 
 @login_required(login_url="error-404")
-@user_passes_test(lambda u: is_admin(u) or is_manager(u), login_url="home")
+@user_passes_test(lambda u: is_admin(u) or is_Organizer(u), login_url="home")
 def edit_event(request, event_id):
     event = Event.objects.get(id=event_id)
     form = EventModelForm(instance=event)
+    org_search_query = request.GET.get('search')
+    organizers = User.objects.filter(groups__name="Organizer")
 
+    if org_search_query:
+        organizers = organizers.filter(username__icontains=org_search_query)
+        
     if request.method == "POST":
         form = EventModelForm(request.POST,request.FILES, instance=event)
+        form.fields["organizers"].queryset = organizers
         if form.is_valid():
             form.save()
             messages.success(request, "Event updated successfully!")
             return redirect('dashboard')
         else:
             messages.error(request, "Something went wrong.")
+    else :            
+        form.fields["organizers"].queryset = organizers
 
     context = {
         "form": form,
         "title": "Edit Event",
+        "orgs": org_search_query
     }
+
     return render(request, "event-form.html", context)
 
 @login_required(login_url="error-404")
-@user_passes_test(lambda u: is_admin(u) or is_manager(u), login_url="home")
+@user_passes_test(lambda u: is_admin(u) or is_Organizer(u), login_url="home")
 def delete_event(request, event_id):
     """
     next_url places the current active url after deletion

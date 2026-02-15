@@ -20,7 +20,7 @@
                 {% csrf_token %}
                 {% comment %} regular fields {% endcomment %}
                 {% for field in form %}
-                    {% if field.name != "participants" %}
+                    {% if field.name != "participants" and field.name != "organizers" %}
                         <div class="">
                         <p class="text-slate-200 font-medium">{{ field.label_tag }}</p>
                         <div>{{ field }}</div>
@@ -32,20 +32,89 @@
                 {% endfor %}
 
                 {% comment %} CheckboxSelectMultiple {% endcomment %}
-                {% comment %} <div class="col-span-2">
-                    <label class="block m-2 font-medium text-slate-200 text-2xl">Participants :</label>
-                    <div class="flex flex-wrap lg:flex-row sm:flex-col gap-3 p-4 bg-slate-800/50 backdrop-blur-lg border border-slate-700/40 rounded-lg">
-                        {% for checkbox in form.participants %}
-                        <div class="flex items-center text-slate-100 gap-3 bg-blue-500/60 backdrop-blur-sm p-2 rounded-xl hover:bg-blue-600/80 transition-colors justify-stretch">
-                            {{ checkbox.tag }}
+                 
+                <div>
+
+                    {% comment %} Search input {% endcomment %}
+                    <label class="block m-2 font-medium text-slate-200 text-2xl">Organizers : </label>
+                    <div class="flex p-5 bg-slate-800/50 backdrop-blur-lg border border-slate-700/40 rounded-lg">
+                        <input
+                            type="text"
+                            id="organizer-search",
+                            name="search"
+                            placeholder="Search events..."
+                            value="{{ org_search_query }}"
+                            class="focus:outline-none w-full rounded px-2 py-1 bg-transparent text-slate-100 placeholder-slate-400"
+                        >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                        </svg>
+
+                    </div>
+
+                    {% comment %} checkboxes {% endcomment %}
+                    <div id="not-found" class="flex gap-5 mt-5 p-5 bg-slate-800/50 backdrop-blur-lg border border-slate-700/40 rounded-lg">
+                        <div class="w-full flex justify-center mt-6 bg-slate-800/50 backdrop-blur-lg p-4 rounded-lg border border-slate-700/40" ><span>Organizer not found</span></div>
+                    </div>
+                    
+                    
+                    <div id="organizer-list" class="hidden flex gap-5 mt-5 p-5 bg-slate-800/50 backdrop-blur-lg border border-slate-700/40 rounded-lg">
+                        {% for checkbox in form.organizers %}
+                        <div class="organizer-item flex items-center text-slate-100 gap-3 bg-blue-500/60 backdrop-blur-sm p-2 rounded-xl hover:bg-blue-600/80 transition-colors justify-stretch">
+                            {{checkbox.tag}}
                             <span>{{ checkbox.choice_label }}</span>
                         </div>
                         {% endfor %}
                     </div>
-                </div> {% endcomment %}
+                    
+                </div>
 
                 <button action="submit" class="w-full bg-gradient-to-r from-blue-500/70 to-indigo-500/70 hover:from-blue-600/90 hover:to-indigo-600/90 backdrop-blur-sm text-white font-bold m-3 py-2 px-4 rounded-full cursor-pointer shadow-lg transition-all duration-200"> Submit </button>
             </form>
         </div>
     </div>
+    
 {% endblock %}
+{% block script %}
+    document.addEventListener("DOMContentLoaded", () => {
+        const searchInput = document.getElementById("organizer-search");
+        const items = document.querySelectorAll("#organizer-list .organizer-item");
+        let list_box = document.getElementById("organizer-list")
+        let not_found = document.getElementById("not-found")
+         
+        function updateOrganizerList(){
+            const query = searchInput.value.toLowerCase().trim();
+            let show = false;
+            items.forEach(item => {
+                const checkbox = item.querySelector("input[type='checkbox']");
+                const label = item.querySelector("span").textContent.toLowerCase();
+                
+                if( checkbox.checked || (query && label.includes(query))) {
+                    item.style.display = "flex";
+                    show = true;
+                } else {
+                    item.style.display = "none"
+                }
+            });
+
+            if(show){
+                list_box.classList.remove("hidden");
+            } else {
+                list_box.classList.add("hidden");
+            }
+            
+            if(query && !show){
+                not_found.classList.remove("hidden");
+            } else {
+                not_found.classList.add("hidden");
+            }     
+        }
+
+        
+        searchInput.addEventListener("input",updateOrganizerList);
+        updateOrganizerList();
+    })
+{% endblock script %}

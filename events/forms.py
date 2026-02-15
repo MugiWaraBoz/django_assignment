@@ -66,14 +66,20 @@ class MixinStyleForm:
 class EventModelForm(MixinStyleForm,forms.ModelForm):
     class Meta:
         model = Event
-        fields = ["name", "description", "date", "time", "location", "category", "image"]
+        fields = ["name", "description", "date", "time", "location", "category", "image", "organizers"]
     
         widgets = {
             "date" : forms.SelectDateWidget(),
             "time": forms.TimeInput(attrs={'type': 'time'}),
             "category" : forms.Select(),
-            # TODO : Image upload not working properly
             "image" : forms.ClearableFileInput(),
+            "organizers" : forms.CheckboxSelectMultiple(),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["organizers"].queryset = User.objects.filter(groups__name="Organizer")
+        self.fields["organizers"].empty_label = None
+        
 
             
