@@ -4,6 +4,7 @@ from django.db.models import Count, Q
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.tokens import default_token_generator
 
 from events.models import Event,Category,RSVP
 from events.forms import EventModelForm
@@ -22,6 +23,9 @@ def participants(u):
 # Create your views here.
 def dashboard(request):
     events = Event.objects.all().select_related('category').prefetch_related('rsvp__participants')
+    events = events.annotate(
+        going_count=Count('rsvp', filter=Q(rsvp__is_going=True))
+    )
     categories = Category.objects.all()
     current_date = date.today()
     category_id = request.GET.get('category')
@@ -88,7 +92,7 @@ def event_details(request, event_id):
 
     return render(request, "event-details.html", context)
 
-@login_required(login_url="error-404")
+@login_required(login_url="error-405")
 @user_passes_test(lambda u: is_admin(u) or is_Organizer(u), login_url="home")
 def event_form(request):
     form = EventModelForm()
@@ -118,7 +122,7 @@ def event_form(request):
 
     return render(request, "event-form.html", context)
 
-@login_required(login_url="error-404")
+@login_required(login_url="error-405")
 @user_passes_test(lambda u: is_admin(u) or is_Organizer(u), login_url="home")
 def edit_event(request, event_id):
     event = Event.objects.get(id=event_id)
@@ -149,7 +153,7 @@ def edit_event(request, event_id):
 
     return render(request, "event-form.html", context)
 
-@login_required(login_url="error-404")
+@login_required(login_url="error-405")
 @user_passes_test(lambda u: is_admin(u) or is_Organizer(u), login_url="home")
 def delete_event(request, event_id):
     """
@@ -168,7 +172,7 @@ def delete_event(request, event_id):
     return redirect(next_url)
 
 
-@login_required(login_url="error-404")
+@login_required(login_url="error-405")
 def rsvp_event(request, event_id):
 
     next_url = request.GET.get('next', 'dashboard')
@@ -179,15 +183,15 @@ def rsvp_event(request, event_id):
     if event.date < current_date:
         messages.error(request, "Event ended")
     elif not rsvp_ins.filter(event__id=event_id, participants=request.user).exists():
-        RSVP.objects.create(event = event, participants = request.user)
-        messages.success(request, "Successfully RSVP the event")
+        RSVP.objects.create(event = event, participants = request.user, is_going = False)
+        messages.success(request, "Confirm RSVP by Clicking the link in your email")
     else :
-        messages.error(request, "Already participating this event")
+        messages.error(request, "Please confirm your RSVP by clicking the link sent to your email.")
 
     return redirect(next_url)
 
 
-@login_required(login_url="error-404")
+@login_required(login_url="error-405")
 def rsvp_removed(request, event_id):
     next_url = request.GET.get('next', 'dashboard')
 
@@ -199,3 +203,24 @@ def rsvp_removed(request, event_id):
         messages.error(request, "Not yet RSVP")
 
     return redirect(next_url)
+
+
+def rsvp_activation(request, uid, token):
+    try:
+        rsvp = RSVP.objects.get(id = uid)
+        if default_token_generator.check_token(rsvp.participants, token):
+            rsvp.is_going = True
+            rsvp.save()
+            messages.success(
+                request,
+                "Successfully RSVP the event"
+            )
+            return redirect("dashboard")
+        else:
+            messages.error(request, "Invalid activation")
+            return redirect('dashboard')
+    except RSVP.DoesNotExist:
+        messages.error(request, "Invalid Activation Link")
+        return redirect("dashboard")
+
+

@@ -7,16 +7,21 @@ from django.core.exceptions import ValidationError
     
 class userCreationForm(MixinStyleForm, forms.ModelForm):
 
+    ROLE_CHOICE = [
+        ("Participant", "Participants"),
+        ("Organizer", "Organizer"),
+    ]
+
     password = forms.CharField(widget=forms.PasswordInput)
     confirm_password = forms.CharField(widget=forms.PasswordInput)
     email = forms.EmailField(required=True)
     first_name = forms.CharField(required=True)
     last_name = forms.CharField(required=True)
     profile_img = forms.ImageField(required=False, label="Profile Image")
-    
+    role = forms.ChoiceField(choices=ROLE_CHOICE, required=True)
     class Meta:
         model = User
-        fields = ["username", "email", "first_name", "last_name", "password", "confirm_password" ,"profile_img"]
+        fields = ["username", "email", "first_name", "last_name", "password", "confirm_password" ,"profile_img", "role"]
     
     def clean_password(self):
         password = self.cleaned_data.get("password")

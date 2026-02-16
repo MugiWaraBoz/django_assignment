@@ -21,12 +21,12 @@
   - [✅] basic UI updated
   - [✅] Connections Between Models Configured
   - [✅] Connecting the whole participant through RSVP model/table
-- [] Models and relation placed
-- [] user can join events
+- [✅] Models and relation placed
+- [✅] user can join events
 - [✅] user can view events
-- [] Confirmation (Email Auth)
-  - [] User signUP confermation
-  - [] User RSVP confermation
+- [✅] Confirmation (Email Auth)
+  - [✅] User signUP confermation
+  - [✅] User RSVP confermation
 - [✅] image field fix
 - [] User-Specific Dashboard (UI)
   - [] Admin

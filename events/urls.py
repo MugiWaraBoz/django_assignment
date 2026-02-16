@@ -1,5 +1,5 @@
 from django.urls import path, include
-from events.views import dashboard, event_details,event_form, delete_event, edit_event, rsvp_event, rsvp_removed
+from events.views import dashboard, event_details,event_form, delete_event, edit_event, rsvp_event, rsvp_removed, rsvp_activation
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -10,7 +10,8 @@ urlpatterns = [
     path("delete-event/<int:event_id>/", delete_event, name="delete-event"),
     path("edit-event/<int:event_id>/", edit_event, name="edit-event"),
     path("rsvp/<int:event_id>/", rsvp_event, name="rsvp"),
-    path("rsvp/remove/<int:event_id>/", rsvp_removed, name="rsvp_r")
+    path("rsvp/remove/<int:event_id>/", rsvp_removed, name="rsvp_r"),
+    path("rsvp/<int:uid>/<str:token>/", rsvp_activation, name="rsvp_activation")
 ]
 
 if settings.DEBUG:

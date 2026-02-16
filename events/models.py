@@ -20,7 +20,6 @@ class Event(models.Model):
     organizers = models.ManyToManyField(
         User,
         related_name = "events",
-        null=True,
         blank=True,
     )
 

@@ -2,9 +2,10 @@ from django.shortcuts import render
 from django.shortcuts import render, redirect
 from django.db.models import Count, Q
 from django.contrib import messages
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test, login_not_required
+from django.contrib.auth.tokens import default_token_generator
 
 from datetime import date
 
@@ -42,10 +43,11 @@ def sign_up(request):
             user = form.save(commit=False)
 
             user.set_password(form.cleaned_data.get("password"))
+            user.is_active = False
             
             user.save()
-            messages.success(request, f"Account created for {username}!")
-            return redirect('dashboard')
+            messages.success(request, f"Check you email for Activation")
+            return redirect('home')
         else:
             messages.error(request, "Registration failed. Please correct the errors below.")
     
@@ -60,3 +62,25 @@ def sign_out(request):
     logout(request)
     # if request.method == 'POST':
     return redirect("dashboard")
+
+def activate_account(request, uid, token):
+    try:
+        print("✅ Activation Success")
+        user = User.objects.get(id=uid)
+        if default_token_generator.check_token(user, token):
+            user.is_active = True
+            user.save()
+            messages.success(
+                request,
+                "Your account has been activated successfully! You can now log in."
+            )
+            return redirect("sign-in")
+        else:
+            messages.error(request, "Invalid activation link.")
+            return redirect('home')
+    except User.DoesNotExist:
+        messages.error(request, "Invalid Activation Link")
+        return redirect("home")
+
+        
+            
