@@ -39,13 +39,16 @@ def sign_up(request):
     if request.method == "POST":
         form = userCreationForm(request.POST, request.FILES)
         if form.is_valid():
-            username = form.cleaned_data.get("username")
             user = form.save(commit=False)
-
             user.set_password(form.cleaned_data.get("password"))
             user.is_active = False
-            
             user.save()
+
+            role = form.cleaned_data.get("role")
+            if role :
+                group, created = Group.objects.get_or_create(name=role)
+                user.groups.add(group)
+
             messages.success(request, f"Check you email for Activation")
             return redirect('home')
         else:
@@ -82,5 +85,13 @@ def activate_account(request, uid, token):
         messages.error(request, "Invalid Activation Link")
         return redirect("home")
 
-        
-            
+def user_dashboard(request, id): 
+    return render(request, "dashboards/user-dashboard.html")
+    
+def admin_dashboard(request, id):
+    return render(request, "dashboards/admin-dashboard.html")
+
+
+
+def organizer_dashboard(request, id):       
+    return render(request, "dashboards/organizer-dashboard.html")            

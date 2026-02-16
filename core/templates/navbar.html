@@ -1,0 +1,83 @@
+{% comment %} For mobile {% endcomment %}
+<div id="mobile-nav" class="hidden bg-slate-900/60 backdrop-blur-lg border border-slate-700/40 w-1/2 h-full fixed top-0 left-0 z-50 flex justify-center" id="mobile-menu">
+    <ul class="list-style-none flex flex-col justify-center gap-4 m-0 p-0 text-slate-300 ">        
+        <li class="mx-4 bg-slate-800/50 backdrop-blur-lg p-4 rounded-xl border border-slate-700/40 text-slate-100 text-center ">
+            <a href="{% url "home" %}" class=" text-xl font-bold text-white">Home</a>
+        </li>
+        <li class="mx-4 bg-slate-800/50 backdrop-blur-lg p-4 rounded-xl border border-slate-700/40 text-slate-100 text-center">
+            <a href="{% url "dashboard" %}" class=" text-xl font-bold text-white">Events</a>
+        </li>
+        {% if user.is_authenticated %}
+        <li class="mx-4 bg-slate-800/50 backdrop-blur-lg p-4 rounded-xl border border-slate-700/40 text-slate-100 text-center">
+            <a href="{% url "sign-out" %}" class=" text-xl font-bold text-white">Sign out</a>
+        </li>
+        {% else %}
+        <li class="mx-4 bg-slate-800/50 backdrop-blur-lg p-4 rounded-xl border border-slate-700/40 text-slate-100 text-center">
+            <a href="{% url "sign-in" %}" class=" text-xl font-bold text-white">Sign in</a>
+        </li>
+        <li class="mx-4 bg-slate-800/50 backdrop-blur-lg p-4 rounded-xl border border-slate-700/40 text-slate-100 text-center">
+            <a href="{% url "sign-up" %}" class=" text-xl font-bold text-white">Sign up</a>
+        </li>
+        {% endif %}
+        {% load user_filters %}
+        {% if user.is_superuser %}
+            <a href="{% url 'admin-dashboard' user.id %}" class="self-center">
+        {% elif user|in_group:"Organizer" %}
+            <a href="{% url 'organizer-dashboard' user.id %}" class="self-center">
+        {% elif user|in_group:"Participants" %}
+            <a href="{% url 'user-dashboard' user.id %}" class="self-center">
+        {% else %}
+            <a href="#" class="self-center">
+        {% endif %}
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-10">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+        </svg>
+        </a>
+    </ul>
+</div>
+
+
+{% comment %} For PC {% endcomment %}
+<div class="bg-slate-900/60 backdrop-blur-lg m-4 p-4 shadow-lg rounded-xl border border-slate-700/40">
+    <ul class="list-style-none flex justify-between gap-4 m-0 p-0 text-slate-300">
+        <button id="mobile-menu-button" class="md:hidden flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 5.25h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5" />
+            </svg>
+        </button>
+        <li class="md:flex hidden items-center justify-center">
+            <a href="{% url "home" %}" class="pl-5 text-xl font-bold text-white">Home</a>
+        </li>
+        <li class="md:flex hidden items-center justify-center">
+            <a href="{% url "dashboard" %}" class="pl-5 text-xl font-bold text-white">Events</a>
+        </li>
+        {% if user.is_authenticated %}
+        <li class="md:flex hidden items-center justify-center">
+            <a href="{% url "sign-out" %}" class="pl-5 text-xl font-bold text-white">Sign out</a>
+        </li>
+        {% else %}
+        <li class="md:flex hidden items-center justify-center">
+            <a href="{% url "sign-in" %}" class="pl-5 text-xl font-bold text-white">Sign in</a>
+        </li>
+        <li class="md:flex hidden items-center justify-center">
+            <a href="{% url "sign-up" %}" class="pl-5 text-xl font-bold text-white">Sign up</a>
+        </li>
+        {% endif %}
+        <p>User groups: {{ user.id|join:", " }}</p>
+        {% load user_filters %}
+        {% if user.is_superuser %}
+            <a href="{% url 'admin-dashboard' user.id %}" class="justify-self-end">
+        {% elif user|in_group:"Organizer" %}
+            <a href="{% url 'organizer-dashboard' user.id %}" class="justify-self-end">
+        {% elif user|in_group:"Participants" %}
+            <a href="{% url 'user-dashboard' user.id %}" class="justify-self-end">
+        {% else %}
+            <a href="#" class="justify-self-end">
+        {% endif %}
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-10">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+        </svg>
+        </a>
+
+    </ul> 
+</div>

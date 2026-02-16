@@ -1,0 +1,21 @@
+{% extends "template.html" %}
+{% block title %}Dashboard{% endblock title %}
+{% block content %}
+    <div class="flex">
+    <div class="bg-slate-901/60 backdrop-blur-lg border active border-slate-700/40 w-80 h-screen rounded-xl z-50 flex justify-center">
+
+        <ul class="mt-10 flex flex-col">
+            <a href="Roles Detail" class="mt-7 hover:text-blue-100 text-xl border-b-2 border-indigo-500 rounded-xl text-center p-2 hover:border-indigo-300 cursor-pointer transition-all">Roles Detail</a>
+            <a href="Manage Roles" class="mt-7 hover:text-blue-100 text-xl border-b-2 border-indigo-500 rounded-xl text-center p-2 hover:border-indigo-300 cursor-pointer transition-all">Manage Roles</a>
+            <a href="Organizers" class="mt-7 hover:text-blue-100 text-xl border-b-2 border-indigo-500 rounded-xl text-center p-2 hover:border-indigo-300 cursor-pointer transition-all">Organizers</a>
+            <a href="Participants" class="mt-7 hover:text-blue-100 text-xl border-b-2 border-indigo-500 rounded-xl text-center p-2 hover:border-indigo-300 cursor-pointer transition-all">Participants</a>
+        </ul>
+    </div>
+
+    <div class="bg-slate-901/60 backdrop-blur-lg border border-slate-700/40 ml-3 w-screen h-screen rounded-xl z-50 flex justify-center">
+        {% block content %}
+        {% endblock content %}
+    </div>
+    </div>
+    
+{% endblock %}

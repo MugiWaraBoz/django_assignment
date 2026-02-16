@@ -8,7 +8,7 @@ from django.core.exceptions import ValidationError
 class userCreationForm(MixinStyleForm, forms.ModelForm):
 
     ROLE_CHOICE = [
-        ("Participant", "Participants"),
+        ("Participants", "Participants"),
         ("Organizer", "Organizer"),
     ]
 
