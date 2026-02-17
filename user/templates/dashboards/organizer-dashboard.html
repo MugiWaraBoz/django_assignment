@@ -1,15 +1,28 @@
 {% extends "template.html" %}
-{% block title %}Dashboard{% endblock title %}
+{% block title %}Organizer Dashboard{% endblock title %}
 {% block content %}
     <div class="flex">
-    <div class="bg-slate-901/60 backdrop-blur-lg border active border-slate-700/40 w-80 h-screen rounded-xl z-50 flex justify-center">
+    <div class="bg-slate-901/60 backdrop-blur-lg border active border-slate-700/40 w-80 h-auto rounded-xl z-50 flex justify-center">
 
-        <h0 class="p-5"> OGANIZER KUN, OHIO GONZALES</h1>
+        <ul class="mt-10 flex flex-col">
+            {% comment %} Current Event hosting {% endcomment %}
+            <a href="{% url 'organizer-events' user.id %}" class="mt-7 hover:text-blue-100 text-xl border-b-2 border-indigo-500 rounded-xl text-center p-2 hover:border-indigo-300 cursor-pointer transition-all">My Events</a>
+             {% comment %} Create Event {% endcomment %}
+            {% comment %} <a href="{% url 'create-event' %}" class="mt-7 hover:text-blue-100 text-xl border-b-2 border-indigo-500 rounded-xl text-center p-2 hover:border-indigo-300 cursor-pointer transition-all">Create Event</a> {% endcomment %}
+             {% comment %} Manage Events {% endcomment %}
+            <a href="{% url 'manage-events' user.id %}" class="mt-7 hover:text-blue-100 text-xl border-b-2 border-indigo-500 rounded-xl text-center p-2 hover:border-indigo-300 cursor-pointer transition-all">Manage Events</a>
+            {% comment %} View RSVPs {% endcomment %}
+            <a href="{% url 'view-rsvps' user.id %}" class="mt-7 hover:text-blue-100 text-xl border-b-2 border-indigo-500 rounded-xl text-center p-2 hover:border-indigo-300 cursor-pointer transition-all">View RSVPs</a>
+        </ul>
     </div>
 
-    <div class="bg-slate-901/60 backdrop-blur-lg border border-slate-700/40 ml-3 w-screen h-screen rounded-xl z-50 flex justify-center">
-
-        <h0 class="p-5"> OGANIZER KUN, OHIO GONZALES</h1>
+    <div class="bg-slate-901/60 backdrop-blur-lg border border-slate-700/40 ml-3 w-screen h-auto min-h-screen rounded-xl z-50 flex justify-center">
+        {% block organizer_content %}
+        <div class="flex flex-col justify-center items-center p-4">
+            <h1 class="text-3xl font-bold text-slate-100 mb-4">Welcome to the Organizer Dashboard</h1>
+            <p class="text-slate-300 text-lg">Use the sidebar to navigate through different sections of the dashboard.</p>
+         </div>
+        {% endblock organizer_content %}
     </div>
     </div>
     

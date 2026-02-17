@@ -74,6 +74,10 @@ def sign_out(request):
     # if request.method == 'POST':
     return redirect("dashboard")
 
+@login_not_required
+def no_permission(request):
+    return render(request, "no-permission.html")
+
 def activate_account(request, uid, token):
     try:
         print("✅ Activation Success")
@@ -93,12 +97,15 @@ def activate_account(request, uid, token):
         messages.error(request, "Invalid Activation Link")
         return redirect("home")
 
-def user_dashboard(request, id): 
-    return render(request, "dashboards/user-dashboard.html")
-    
+# ADMIN DASHBOARD VIEWS
+
+@login_required(login_url="home")
+@user_passes_test(lambda u: u.groups.filter(name="Admin").exists(), login_url="no-permission")
 def admin_dashboard(request):
     return render(request, "dashboards/admin-dashboard.html")
 
+@login_required(login_url="home")
+@user_passes_test(lambda u: u.groups.filter(name="Admin").exists(), login_url="no-permission")
 def manage_roles(request):
     users = User.objects.prefetch_related('groups')
 
@@ -108,6 +115,8 @@ def manage_roles(request):
     
     return render(request, "dashboards/admin/manage-roles.html", context)
 
+@login_required(login_url="home")
+@user_passes_test(lambda u: u.groups.filter(name="Admin").exists(), login_url="no-permission")
 def change_user_group(request, user_id):
     user = User.objects.get(id=user_id)
     if request.method == "POST":
@@ -121,6 +130,8 @@ def change_user_group(request, user_id):
             messages.error(request, "No group selected.")
     return redirect("manage-roles")
 
+@login_required(login_url="home")
+@user_passes_test(lambda u: u.groups.filter(name="Admin").exists(), login_url="no-permission")
 def organizers(request):
     organizers = User.objects.select_related('profile').prefetch_related('groups', 'events').filter(groups__name="Organizer")
     organizers = organizers.annotate(event_organized_count=Count('events', distinct=True))
@@ -129,6 +140,8 @@ def organizers(request):
     }
     return render(request, "dashboards/admin/organizers.html", context)
 
+@login_required(login_url="home")
+@user_passes_test(lambda u: u.groups.filter(name="Admin").exists(), login_url="no-permission")
 def participants(request):
     participants = User.objects.select_related('profile').prefetch_related('groups', 'events', 'rsvp').filter(groups__name="Participants")
     participants = participants.annotate(event_participated_count=Count('rsvp__event', distinct=True))
@@ -137,6 +150,8 @@ def participants(request):
     }
     return render(request, "dashboards/admin/participants.html", context)
 
+@login_required(login_url="home")
+@user_passes_test(lambda u: u.groups.filter(name="Admin").exists(), login_url="no-permission")
 def role_details(request):
     groups = Group.objects.prefetch_related("permissions").all()
             
@@ -146,5 +161,37 @@ def role_details(request):
     return render(request, "dashboards/admin/role-details.html", context)
 
 
+# ORGANIZER DASHBOARD VIEWS
+@login_required(login_url="home")
+@user_passes_test(lambda u: u.groups.filter(name="Organizer").exists(), login_url="no-permission")
 def organizer_dashboard(request, id):       
-    return render(request, "dashboards/organizer-dashboard.html")            
+    return render(request, "dashboards/organizer-dashboard.html", {"id": id})   
+
+@login_required(login_url="home")
+@user_passes_test(lambda u: u.groups.filter(name="Organizer").exists(), login_url="no-permission")
+def organizer_events(request, id):
+    return render(request, "dashboards/organizer/organizer-events.html", {"id": id})
+
+@login_required(login_url="home")
+@user_passes_test(lambda u: u.groups.filter(name="Organizer").exists(), login_url="no-permission")
+def manage_events(request, id):
+    return render(request, "dashboards/organizer/manage-events.html", {"id": id})   
+
+@login_required(login_url="home")
+@user_passes_test(lambda u: u.groups.filter(name="Organizer").exists(), login_url="no-permission")
+def view_rsvps(request, id):
+    return render(request, "dashboards/organizer/view-rsvps.html", {"id": id})
+        
+
+# USER DASHBOARD VIEWS# USER DASHBOARD VIEWS
+@login_required(login_url="home")
+@user_passes_test(lambda u: u.groups.filter(name="Participants").exists(), login_url="no-permission")
+def user_dashboard(request, id): 
+    return render(request, "dashboards/user-dashboard.html", {"id": id})
+
+
+@login_required(login_url="home")
+@user_passes_test(lambda u: u.groups.filter(name="Participants").exists(), login_url="no-permission")
+def usr_view_rsvps(request, id):
+    return render(request, "dashboards/user/view-rsvps.html", {"id": id})
+    

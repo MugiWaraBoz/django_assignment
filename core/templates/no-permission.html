@@ -1,0 +1,27 @@
+{% extends "template.html" %}
+{% block title %}No Permission{% endblock title %}
+{% block content %}
+<div class="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-4">
+    <div class="max-w-md w-full">
+        <div class="bg-slate-800/50 backdrop-blur-lg border border-slate-700/40 rounded-xl p-8 text-center">
+            <div class="mb-6 flex justify-center items-center text-red-500">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-[100px]">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                </svg>
+
+            </div>
+            <h1 class="text-3xl font-bold text-white mb-2">403</h1>
+            <p class="text-xl font-semibold text-slate-200 mb-4">Access Denied</p>
+            <p class="text-slate-400 mb-8">You don't have permission to access this page. Please contact an administrator if you believe this is a mistake.</p>
+            <div class="space-y-3">
+                <a href="{% url 'home' %}" class="block w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+                    Go to Home
+                </a>
+                <a href="javascript:history.back()" class="block w-full bg-slate-700 hover:bg-slate-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+                    Go Back
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

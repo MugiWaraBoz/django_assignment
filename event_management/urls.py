@@ -4,12 +4,14 @@ from django.conf import settings
 from django.conf.urls.static import static
 from debug_toolbar.toolbar import debug_toolbar_urls
 from core.views import home, error_404
+from user.views import no_permission
  
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('events.urls')),
     path('user/', include('user.urls')),
     path('home/', home, name='home'),
+    path('no-permission/', no_permission, name='no-permission'),
     path('error-404/', error_404, name='error-404'),
 ]
 

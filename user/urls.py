@@ -1,5 +1,5 @@
 from django.urls import path, include
-from user.views import change_user_group, manage_roles, organizers, role_details, role_details, participants, sign_in, sign_out, sign_up, activate_account, user_dashboard, admin_dashboard, organizer_dashboard
+from user.views import change_user_group, manage_roles, organizer_events, organizers, role_details, role_details, participants, sign_in, sign_out, sign_up, activate_account, user_dashboard, admin_dashboard, organizer_dashboard, usr_view_rsvps
 
 urlpatterns = [
     path("sign-up/", sign_up, name = "sign-up"), 
@@ -14,7 +14,14 @@ urlpatterns = [
     path("admin-dashboard/change-user-group/<int:user_id>/", change_user_group, name="change-user-group"),
 
     path("organizer-dashboard/<int:id>/", organizer_dashboard, name = "organizer-dashboard"),
+    path("organizer-dashboard/<int:id>/events/", organizer_events, name = "organizer-events"),
+    path("organizer-dashboard/<int:id>/events/manage/", organizer_events, name = "manage-events"),
+    path("organizer-dashboard/<int:id>/rsvps/view/", organizer_events, name = "view-rsvps"),
+
+
     path("user-dashboard/<int:id>/", user_dashboard, name = "user-dashboard"),
+    path("user-dashboard/<int:id>/rsvps/view/", usr_view_rsvps, name = "usr_view-rsvps"),
+
     path("activate/<int:uid>/<str:token>/", activate_account, name="activate_account")
     
 ]

@@ -29,9 +29,9 @@
   - [✅] User RSVP confermation
 - [✅] image field fix
 - [] User-Specific Dashboard (UI)
-  - [] Admin
+  - [✅] Admin
   - [] Organizer
   - [] Participant
-  - [] Navbar Updated
+  - [✅] Navbar Updated
 - [] Website UI resposive
 - [] SQL Optimization
