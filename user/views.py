@@ -6,11 +6,14 @@ from django.contrib.auth.models import User, Group
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test, login_not_required
 from django.contrib.auth.tokens import default_token_generator
+from django.db.models import Prefetch
+
 
 from datetime import date
 
 from events.models import Event,Category
 from user.forms import CustomAuthenticationForm, userCreationForm
+from user.models import Profile
 
 # Create your views here.
 @login_not_required
@@ -44,6 +47,11 @@ def sign_up(request):
             user.is_active = False
             user.save()
 
+            profile = Profile.objects.create(
+                user=user,
+                profile_img=form.cleaned_data.get("profile_img")
+            )
+            profile.save()
             role = form.cleaned_data.get("role")
             if role :
                 group, created = Group.objects.get_or_create(name=role)
@@ -88,9 +96,54 @@ def activate_account(request, uid, token):
 def user_dashboard(request, id): 
     return render(request, "dashboards/user-dashboard.html")
     
-def admin_dashboard(request, id):
+def admin_dashboard(request):
     return render(request, "dashboards/admin-dashboard.html")
 
+def manage_roles(request):
+    users = User.objects.prefetch_related('groups')
+
+    context = {
+        "users" : users,
+    }
+    
+    return render(request, "dashboards/admin/manage-roles.html", context)
+
+def change_user_group(request, user_id):
+    user = User.objects.get(id=user_id)
+    if request.method == "POST":
+        new_group_name = request.POST.get("group")
+        if new_group_name:
+            new_group, created = Group.objects.get_or_create(name=new_group_name)
+            user.groups.clear()
+            user.groups.add(new_group)
+            messages.success(request, f"{user.username} is now a {new_group_name}")
+        else:
+            messages.error(request, "No group selected.")
+    return redirect("manage-roles")
+
+def organizers(request):
+    organizers = User.objects.select_related('profile').prefetch_related('groups', 'events').filter(groups__name="Organizer")
+    organizers = organizers.annotate(event_organized_count=Count('events', distinct=True))
+    context = {
+        "organizers" : organizers,
+    }
+    return render(request, "dashboards/admin/organizers.html", context)
+
+def participants(request):
+    participants = User.objects.select_related('profile').prefetch_related('groups', 'events', 'rsvp').filter(groups__name="Participants")
+    participants = participants.annotate(event_participated_count=Count('rsvp__event', distinct=True))
+    context = {
+        "participants" : participants
+    }
+    return render(request, "dashboards/admin/participants.html", context)
+
+def role_details(request):
+    groups = Group.objects.prefetch_related("permissions").all()
+            
+    context = {
+        "groups" : groups,
+    }
+    return render(request, "dashboards/admin/role-details.html", context)
 
 
 def organizer_dashboard(request, id):       

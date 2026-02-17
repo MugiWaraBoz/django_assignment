@@ -1,21 +1,22 @@
-{% extends "admin-dashboard.html" %}
+{% extends "../admin-dashboard.html" %}
 {% block title %}Role Details{% endblock title %}
-{% block content %}
-    <div class="flex">
-    <div class="bg-slate-901/60 backdrop-blur-lg border active border-slate-700/40 w-80 h-screen rounded-xl z-50 flex justify-center">
+{% block admin_content %}
+<div class="flex flex-row gap-4 p-4">
+    {% for group in groups %}
+            <div class="hover:bg-slate-700/50 bg-slate-800/50 backdrop-blur-lg p-4 rounded-xl border border-slate-700/40 text-slate-100 transition-colors cursor-pointer">
+                <div class="flex flex-col justify-center">
+                <p class="font-bold text-2xl text-slate-100">{{group.name}}</p><br>
+                <p class="font-bold my-2 text-slate-300">Permissions:</p>
+                <ul class="list-disc list-inside text-slate-300 my-2 ">
+                    {% for permission in group.permissions.all %}
+                        <li class="my-2"><span class="text-white">{{ permission.name }}</span> |<span class="bg-slate-700/50 px-2 py-1 rounded-md mx-2">{{ permission.codename }}</span></li>
+                    {% empty %}
+                        <li><span class="text-white">No permissions assigned</span></li>
+                    {% endfor %}
+                </ul>
+                </div>
 
-        <ul class="mt-10 flex flex-col">
-            <a href="Roles Detail" class="mt-7 hover:text-blue-100 text-xl border-b-2 border-indigo-500 rounded-xl text-center p-2 hover:border-indigo-300 cursor-pointer transition-all">Roles Detail</a>
-            <a href="Manage Roles" class="mt-7 hover:text-blue-100 text-xl border-b-2 border-indigo-500 rounded-xl text-center p-2 hover:border-indigo-300 cursor-pointer transition-all">Manage Roles</a>
-            <a href="Organizers" class="mt-7 hover:text-blue-100 text-xl border-b-2 border-indigo-500 rounded-xl text-center p-2 hover:border-indigo-300 cursor-pointer transition-all">Organizers</a>
-            <a href="Participants" class="mt-7 hover:text-blue-100 text-xl border-b-2 border-indigo-500 rounded-xl text-center p-2 hover:border-indigo-300 cursor-pointer transition-all">Participants</a>
-        </ul>
-    </div>
-
-    <div class="bg-slate-901/60 backdrop-blur-lg border border-slate-700/40 ml-3 w-screen h-screen rounded-xl z-50 flex justify-center">
-        {% block content %}
-        {% endblock content %}
-    </div>
-    </div>
-    
+            </div>
+    {% endfor %}
+</div>  
 {% endblock %}

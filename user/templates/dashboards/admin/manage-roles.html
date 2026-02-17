@@ -1,5 +1,63 @@
-{% extends "admin-dashboard.html" %}
+{% extends "../admin-dashboard.html" %}
 {% block title %}Manage Roles{% endblock title %}
-{% block content %}
-    Manage Roles
+{% block admin_content %}
+<div class="flex flex-col justify-start p-4">
+    <div class="flex p-4">
+        <input id="search-input" type="text" name="search" placeholder="Search by username or email" class="w-full bg-slate-700/50 text-slate-100 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
+        <div class="col-span-full py-4 flex justify-center items-center hover:bg-slate-700/50 bg-slate-800/50 backdrop-blur-lg rounded-xl border border-slate-700/40 text-slate-100 transition-colors cursor-pointer">
+            <p id="total_user" class="font-bold text-center text-2xl text-slate-100">Total Users: {{ users|length }}</p>
+        </div>
+        {% for user in users %}
+        <div class="user-card flex flex-col md:flex-row items-center hover:bg-slate-700/50 bg-slate-800/50 backdrop-blur-lg p-6 rounded-xl border border-slate-700/40 text-slate-100 transition-colors cursor-pointer shadow-lg">
+            <div class="flex flex-col justify-center flex-1">
+                <p class="font-bold text-xl text-slate-100 mb-1">Username: <span class="user_name">{{ user.username }}</span></p>
+                <p class="text-slate-300 my-1">Email: <span class="user_email text-white">{{ user.email }}</span></p>
+                <div class="text-slate-300 my-1 flex items-center gap-2">
+                    <span>Groups:</span>
+                    <form method="post" action="{% url 'change-user-group' user.id %}" class="inline bg-slate-100 px-2 py-1 rounded-md">
+                        {% csrf_token %}
+                        {% load user_user_filters %}
+                        <select name="group" onchange="this.form.submit()" class="bg-transparent border-none text-slate-800 focus:ring-0">
+                            <option value="Organizer" {% if user|in_group:"Organizer" %}selected{% endif %}>Organizer</option>
+                            <option value="Participants" {% if user|in_group:"Participants" %}selected{% endif %}>Participant</option>
+                            <option value="Admin" {% if user|in_group:"Admin" %}selected{% endif %}>Admin</option>
+                        </select>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+
+document.addEventListener("DOMContentLoaded", () => {
+    const searchInput = document.getElementById("search-input");
+    const userCards = document.querySelectorAll(".user-card");
+    const totalUser = document.getElementById("total_user");
+    searchInput.addEventListener("input", () => {
+        const query = searchInput.value.toLowerCase();
+        let visibleCount = 0;
+        userCards.forEach(card => {
+            const username = card.querySelector(".user_name").textContent.toLowerCase();
+            const email = card.querySelector(".user_email").textContent.toLowerCase();
+            if (username.includes(query) || email.includes(query)) {
+                card.style.display = "flex";
+                visibleCount++;
+            } else {
+                card.style.display = "none";
+            }
+        });
+        if (query === "") {
+            totalUser.parentElement.style.display = "flex";
+        } else {
+            totalUser.parentElement.style.display = visibleCount === 0 ? "none" : "flex";
+        }
+    });
+});
+
 {% endblock %}

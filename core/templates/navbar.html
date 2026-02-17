@@ -19,9 +19,9 @@
             <a href="{% url "sign-up" %}" class=" text-xl font-bold text-white">Sign up</a>
         </li>
         {% endif %}
-        {% load user_filters %}
+        {% load core_user_filters %}
         {% if user.is_superuser %}
-            <a href="{% url 'admin-dashboard' user.id %}" class="self-center">
+            <a href="{% url 'admin-dashboard'%}" class="self-center">
         {% elif user|in_group:"Organizer" %}
             <a href="{% url 'organizer-dashboard' user.id %}" class="self-center">
         {% elif user|in_group:"Participants" %}
@@ -64,9 +64,9 @@
         </li>
         {% endif %}
         <p>User groups: {{ user.id|join:", " }}</p>
-        {% load user_filters %}
+        {% load core_user_filters %}
         {% if user.is_superuser %}
-            <a href="{% url 'admin-dashboard' user.id %}" class="justify-self-end">
+            <a href="{% url 'admin-dashboard'%}" class="justify-self-end">
         {% elif user|in_group:"Organizer" %}
             <a href="{% url 'organizer-dashboard' user.id %}" class="justify-self-end">
         {% elif user|in_group:"Participants" %}
