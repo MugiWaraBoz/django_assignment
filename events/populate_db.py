@@ -12,6 +12,7 @@ from django.contrib.auth.models import User, Group
 from django.core.files import File
 from django.conf import settings
 from events.models import Category, Event, RSVP
+from user.models import Profile
 
 # ---- Initialize Faker ----
 fake = Faker()
@@ -61,15 +62,40 @@ for _ in range(20):
     full_name = fake.name()
     email = fake.unique.email()
     username = email.split("@")[0]
+    password = "Password123!"  # Default password for testing
 
-    user = User.objects.create_user(
+    # Check if user already exists
+    user, created = User.objects.get_or_create(
         username=username,
-        email=email,
-        password="Password123!"
+        defaults={
+            "email": email,
+            "first_name": full_name.split(" ")[0],
+            "last_name": " ".join(full_name.split(" ")[1:]),
+        }
     )
-    user.first_name = full_name.split(" ")[0]
-    user.last_name = " ".join(full_name.split(" ")[1:])
-    user.save()
+
+    if created:
+        user.set_password(password)
+        user.save()
+
+        # Assign a profile image if available
+        if image_paths:
+            image_path = random.choice(image_paths)
+            with open(image_path, "rb") as image_file:
+                Profile.objects.get_or_create(
+                    user=user,
+                    defaults={
+                        "profile_img": File(image_file, name=os.path.basename(image_path))
+                    }
+                )
+        else:
+            Profile.objects.get_or_create(user=user)
+
+        # Log the username and password for testing purposes
+        print(f"User created: {username}, Password: {password}")
+    else:
+        print(f"User already exists: {username}")
+
     users.append(user)
 
 # ---- Assign users to groups ----
@@ -84,7 +110,7 @@ for organizer in organizers:
 for participant in participants:
     participant.groups.add(participant_group)
 
-print("✅ 20 fake users created successfully!")
+print("✅ 20 fake users processed successfully!")
 
 # ---- Generate fake events ----
 categories = list(Category.objects.all())
@@ -122,5 +148,8 @@ for _ in range(15):
             participants=participant,
             is_going=True,
         )
+
+    # Log RSVP count for the event
+    print(f"Event '{event.name}' has {participant_count} RSVPs.")
 
 print("✅ 15 fake events created successfully!")

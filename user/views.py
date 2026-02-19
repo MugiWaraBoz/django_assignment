@@ -81,7 +81,7 @@ def no_permission(request):
 
 def activate_account(request, uid, token):
     try:
-        print("✅ Activation Success")
+        # print("✅ Activation Success")
         user = User.objects.get(id=uid)
         if default_token_generator.check_token(user, token):
             user.is_active = True

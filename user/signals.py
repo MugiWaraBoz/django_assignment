@@ -10,13 +10,13 @@ from event_management import settings
 @receiver(post_save, sender=User)
 def send_activation_email(sender, instance, created, **kwargs):
     if created:
-        print("✅ User Created")
+        # print("✅ User Created")
         token = default_token_generator.make_token(instance)
         activation_url = (
             f"{config('FRONTEND_URL')}/user/activate/{instance.id}/{token}"
         )
         try:
-            print("✅ Email sended")
+            # print("✅ Email sended")
             send_mail(
                 subject="Activate Your Account",
                 message=f"Please activate your account using the following link :{activation_url}",

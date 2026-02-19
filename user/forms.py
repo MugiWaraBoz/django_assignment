@@ -9,7 +9,6 @@ class userCreationForm(MixinStyleForm, forms.ModelForm):
 
     ROLE_CHOICE = [
         ("Participants", "Participants"),
-        ("Organizer", "Organizer"),
     ]
 
     password = forms.CharField(widget=forms.PasswordInput)
