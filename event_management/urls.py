@@ -2,9 +2,11 @@ from django.contrib import admin
 from django.urls import include, path
 from django.conf import settings
 from django.conf.urls.static import static
+from debug_toolbar.toolbar import debug_toolbar_urls
 from core.views import home, error_404
 from user.views import no_permission
-
+from event_management.settings import DEBUG
+ 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('events.urls')),
@@ -15,4 +17,7 @@ urlpatterns = [
 ]
 
 # Serve media files in development
+if DEBUG:  # Serve media regardless of DEBUG for development
+    urlpatterns += debug_toolbar_urls()
+
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
