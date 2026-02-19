@@ -1,5 +1,7 @@
 from django.urls import path, include
-from user.views import change_user_group, manage_roles, organizer_events, organizers, role_details, role_details, participants, sign_in, sign_out, sign_up, activate_account, user_dashboard, admin_dashboard, organizer_dashboard, usr_view_rsvps
+from user.views import change_user_group, manage_all_events, manage_events, manage_roles,create_event_org, organizers, role_details, role_details, participants, sign_in, sign_out, sign_up, activate_account, user_dashboard, admin_dashboard, organizer_dashboard, usr_view_rsvps, view_rsvps, admin_view_rsvps
+
+from events.views import event_form
 
 urlpatterns = [
     path("sign-up/", sign_up, name = "sign-up"), 
@@ -12,15 +14,16 @@ urlpatterns = [
     path("admin-dashboard/participants/", participants, name = "participants"),
     path("admin-dashboard/role-details/", role_details, name = "role-details"),
     path("admin-dashboard/change-user-group/<int:user_id>/", change_user_group, name="change-user-group"),
+    path("admin-dashboard/manage-all-events/", manage_all_events, name="manage-all-events"),
+    path("admin-dashboard/rsvps/view/", admin_view_rsvps, name="admin-view-rsvps"),
 
     path("organizer-dashboard/<int:id>/", organizer_dashboard, name = "organizer-dashboard"),
-    path("organizer-dashboard/<int:id>/events/", organizer_events, name = "organizer-events"),
-    path("organizer-dashboard/<int:id>/events/manage/", organizer_events, name = "manage-events"),
-    path("organizer-dashboard/<int:id>/rsvps/view/", organizer_events, name = "view-rsvps"),
-
+    path("organizer-dashboard/<int:id>/events/manage/", manage_events, name = "manage-events"),
+    path("organizer-dashboard/<int:id>/rsvps/view/", view_rsvps, name = "view-rsvps"),
+    path("event/create/", event_form, name="create-event"),
 
     path("user-dashboard/<int:id>/", user_dashboard, name = "user-dashboard"),
-    path("user-dashboard/<int:id>/rsvps/view/", usr_view_rsvps, name = "usr_view-rsvps"),
+    path("user-dashboard/<int:id>/rsvps/view/", usr_view_rsvps, name = "usr-view-rsvps"),
 
     path("activate/<int:uid>/<str:token>/", activate_account, name="activate_account")
     

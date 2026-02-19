@@ -17,7 +17,7 @@ def is_admin(u):
 def is_Organizer(u):
     return u.groups.filter(name="Organizer").exists()
 
-def participants(u):
+def is_participant(u):
     return u.groups.filter(name="Participants").exists()
 
 # Create your views here.
@@ -84,7 +84,7 @@ def dashboard(request):
     return render(request, 'dashboard.html', context)
 
 def event_details(request, event_id):
-    event = Event.objects.prefetch_related('rsvp__participants').get(id=event_id)
+    event = Event.objects.prefetch_related('rsvp__participants', 'organizers').get(id=event_id)
     context = {
         "event": event,
         "count": event.rsvp.aggregate(participants_cnt=Count('id')),
@@ -94,7 +94,7 @@ def event_details(request, event_id):
 
 @login_required(login_url="error-405")
 @user_passes_test(lambda u: is_admin(u) or is_Organizer(u), login_url="home")
-def event_form(request):
+def event_form(request, usr_id):
     form = EventModelForm()
     org_search_query = request.GET.get('search')
     organizers = User.objects.filter(groups__name="Organizer")
@@ -106,7 +106,10 @@ def event_form(request):
         form = EventModelForm(request.POST, request.FILES)
         form.fields["organizers"].queryset = organizers
         if form.is_valid():
-            form.save()
+            event = form.save(commit=False)
+            event.save()
+            form.save_m2m()
+            event.organizers.add(User.objects.get(id=usr_id))
             messages.success(request, "Event created successfully!")
             return redirect('dashboard')
         else:
@@ -116,7 +119,7 @@ def event_form(request):
 
     context = {
         "form": form,
-        "title": "Add a New Event",
+        # "title": "Add a New Event",
         "orgs": org_search_query
     }
 
@@ -159,7 +162,7 @@ def delete_event(request, event_id):
     """
     next_url places the current active url after deletion
     """
-    next_url = request.GET.get('next', 'dashboard')
+    next_url = request.GET.get('next', request.META.get('HTTP_REFERER', '/'))
 
     try:
         event = Event.objects.get(id=event_id)
@@ -178,7 +181,7 @@ def rsvp_event(request, event_id):
     next_url = request.GET.get('next', 'dashboard')
     event = Event.objects.get(id=event_id)
     current_date = date.today()
-    rsvp_ins = RSVP.objects.select_related('event', 'participants')
+    rsvp_ins = RSVP.objects.select_related('event', 'participants', 'organizers')
 
     if event.date < current_date:
         messages.error(request, "Event ended")
@@ -193,9 +196,13 @@ def rsvp_event(request, event_id):
 
 @login_required(login_url="error-405")
 def rsvp_removed(request, event_id):
-    next_url = request.GET.get('next', 'dashboard')
+    next_url = request.GET.get('next', request.META.get('HTTP_REFERER', '/'))
 
-    rsvp_ins = RSVP.objects.select_related('event', 'participants').filter(event__id=event_id, participants=request.user)
+    rsvp_ins = RSVP.objects.filter(
+        Q(participants=request.user) | Q(event__organizers=request.user),
+        event__id=event_id
+    )
+    
     if rsvp_ins.exists():
         rsvp_ins.delete()
         messages.success(request, "RSVP Removed") 
@@ -204,7 +211,7 @@ def rsvp_removed(request, event_id):
 
     return redirect(next_url)
 
-
+@login_required(login_url="error-405")
 def rsvp_activation(request, uid, token):
     try:
         rsvp = RSVP.objects.get(id = uid)

@@ -1,25 +1,28 @@
-{% extends "template.html" %}
-{% block title %}Dashboard{% endblock title %}
-{% block content %}
-    <div class="flex">
-    <div class="bg-slate-901/60 backdrop-blur-lg border active border-slate-700/40 w-80 h-auto rounded-xl z-50 flex justify-center">
+{% extends "dashboards/base-dashboard.html" %}
+{% block title %}Admin Dashboard{% endblock title %}
 
-        <ul class="mt-10 flex flex-col">
-            <a href="{% url 'role-details' %}" class="mt-7 hover:text-blue-100 text-xl border-b-2 border-indigo-500 rounded-xl text-center p-2 hover:border-indigo-300 cursor-pointer transition-all">Roles Detail</a>
-            <a href="{% url 'manage-roles' %}" class="mt-7 hover:text-blue-100 text-xl border-b-2 border-indigo-500 rounded-xl text-center p-2 hover:border-indigo-300 cursor-pointer transition-all">Manage Roles</a>
-            <a href="{% url 'organizers' %}" class="mt-7 hover:text-blue-100 text-xl border-b-2 border-indigo-500 rounded-xl text-center p-2 hover:border-indigo-300 cursor-pointer transition-all">Organizers</a>
-            <a href="{% url 'participants' %}" class="mt-7 hover:text-blue-100 text-xl border-b-2 border-indigo-500 rounded-xl text-center p-2 hover:border-indigo-300 cursor-pointer transition-all">Participants</a>
-        </ul>
-    </div>
+{% block sidebar_links %}
+<a href="{% url 'role-details' %}" class="py-3 px-4 hover:bg-slate-700/50 text-lg border-b border-slate-700/40 text-slate-100 hover:text-blue-100 rounded-md transition-all">Roles Detail</a>
+<a href="{% url 'manage-roles' %}" class="py-3 px-4 hover:bg-slate-700/50 text-lg border-b border-slate-700/40 text-slate-100 hover:text-blue-100 rounded-md transition-all">Manage Roles</a>
+<a href="{% url 'organizers' %}" class="py-3 px-4 hover:bg-slate-700/50 text-lg border-b border-slate-700/40 text-slate-100 hover:text-blue-100 rounded-md transition-all">Organizers</a>
+<a href="{% url 'participants' %}" class="py-3 px-4 hover:bg-slate-700/50 text-lg border-b border-slate-700/40 text-slate-100 hover:text-blue-100 rounded-md transition-all">Participants</a>
+<a href="{% url 'manage-all-events'%}" class="py-3 px-4 hover:bg-slate-700/50 text-lg border-b border-slate-700/40 text-slate-100 hover:text-blue-100 rounded-md transition-all">Manage Events</a>
+<a href="{% url 'admin-view-rsvps' %}" class="py-3 px-4 hover:bg-slate-700/50 text-lg border-b border-slate-700/40 text-slate-100 hover:text-blue-100 rounded-md transition-all">View RSVPs</a>
 
-    <div class="bg-slate-901/60 backdrop-blur-lg border border-slate-700/40 ml-3 w-screen h-auto min-h-screen rounded-xl z-50 flex justify-center">
-        {% block admin_content %}
-        <div class="flex flex-col justify-center items-center p-4">
-            <h1 class="text-3xl font-bold text-slate-100 mb-4">Welcome to the Admin Dashboard</h1>
-            <p class="text-slate-300 text-lg">Use the sidebar to navigate through different sections of the dashboard.</p>
-         </div>
-        {% endblock admin_content %}
+<h1 class="text-2xl font-bold mt-10 mb-4 text-slate-100 text-center bg-slate-800/50 p-2 rounded-md">Navigation</h1>
+<a href="{% url 'dashboard'%}" class="py-3 px-4 hover:bg-slate-700/50 text-lg border-b border-slate-700/40 text-slate-100 hover:text-blue-100 rounded-md transition-all">Back to event Dashboard</a>
+<a href="{% url 'home' %}" class="py-3 px-4 hover:bg-slate-700/50 text-lg border-b border-slate-700/40 text-slate-100 hover:text-blue-100 rounded-md transition-all">Back to Home</a>
+<a href="{% url 'sign-out' %}" class="py-3 px-4 hover:bg-slate-700/50 text-lg border-b border-slate-700/40 text-slate-100 hover:text-blue-100 rounded-md transition-all">Logout</a>
+{% endblock sidebar_links %}
+
+{% block dashboard_title %}Welcome to the Admin Dashboard{% endblock dashboard_title %}
+{% block dashboard_description %}Use the sidebar to navigate through different sections of the dashboard.{% endblock dashboard_description %}
+
+{% block dashboard_content %}
+    {% block admin_content %}
+    <div class="flex flex-col justify-center items-center p-4">
+        <h1 class="text-3xl font-bold text-slate-100 mb-4">Welcome to the Admin Dashboard</h1>
+        <p class="text-slate-300 text-lg">Use the sidebar to navigate through different sections of the dashboard.</p>
     </div>
-    </div>
-    
-{% endblock %}
+    {% endblock admin_content %}
+{% endblock dashboard_content %}

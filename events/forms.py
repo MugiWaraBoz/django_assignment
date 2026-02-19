@@ -1,6 +1,7 @@
 from django import forms
 from events.models import Event,Category
 from django.contrib.auth.models import User
+from django.db.models import Q
 
 
 
@@ -78,7 +79,7 @@ class EventModelForm(MixinStyleForm,forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["organizers"].queryset = User.objects.filter(groups__name="Organizer")
+        self.fields["organizers"].queryset = User.objects.filter(Q(groups__name="Organizer")|Q(groups__name="Admin"))
         self.fields["organizers"].empty_label = None
         
 

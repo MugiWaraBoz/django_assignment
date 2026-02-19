@@ -28,10 +28,15 @@
   - [✅] User signUP confermation
   - [✅] User RSVP confermation
 - [✅] image field fix
-- [] User-Specific Dashboard (UI)
+- [✅] User-Specific Dashboard (UI)
   - [✅] Admin
-  - [] Organizer
-  - [] Participant
+  - [✅] Organizer
+  - [✅] Participant
   - [✅] Navbar Updated
-- [] Website UI resposive
-- [] SQL Optimization
+- [✅] Website UI resposive
+- [✅] SQL Optimization
+
+## FIX
+
+- [] RSPV filter need to be fixed for each dashboards
+- [] RSVP JavaScripts need to be fixed, searching not working properly

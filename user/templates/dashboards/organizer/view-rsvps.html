@@ -1,14 +1,41 @@
 {% extends "../organizer-dashboard.html" %}
 {% block title %}View RSVPs{% endblock title %}
 {% block organizer_content %}
-<div class="flex flex-col justify-start p-4">
+<div class="w-full flex flex-col justify-start p-4">
     <div class="flex p-4">
         <input id="search-input" type="text" name="search" placeholder="Search by participant name or email" class="w-full bg-slate-700/50 text-slate-100 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
     </div>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
         <div class="col-span-full flex justify-center items-center hover:bg-slate-700/50 bg-slate-800/50 backdrop-blur-lg p-4 rounded-xl border border-slate-700/40 text-slate-100 transition-colors cursor-pointer">
-            <p id="total_rsvps" class="font-bold text-center text-2xl text-slate-100">Total RSVPs: 0</p>
+            <p id="total_rsvps" class="font-bold text-center text-2xl text-slate-100">Total RSVPs: {{ events|length }}</p>
         </div>
     </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
+        {% comment %} {{ rsvp_events }} {% endcomment %}
+        {% for event in events %}
+        <div class="flex flex-col gap-3 bg-slate-800/50 backdrop-blur-lg p-4 rounded-xl border border-slate-700/40 text-slate-100 hover:bg-slate-700/50 transition-colors">
+            {% if event.event.image %}
+            <img src="{{ event.event.image.url }}" alt="{{ event.event.name }}" class="w-full h-40 object-cover rounded-lg mb-4 border border-slate-700/40">
+            {% else %}
+            <div class="w-full h-40 bg-slate-700/50 flex items-center justify-center rounded-lg mb-4 border border-slate-700/40">
+                <span class="text-slate-300">No Image Available</span>
+            </div>
+            {% endif %}
+            <h2 class="text-xl font-bold mb-2">{{ event.event.name }}</h2>
+            <p class="text-sm text-slate-300 mb-1"><strong>Date:</strong> {{ event.event.date }}</p>
+            <p class="text-sm text-slate-300 mb-1"><strong>Time:</strong> {{ event.event.time }}</p>
+            <p class="text-sm text-slate-300 mb-1"><strong>Location:</strong> {{ event.event.location }}</p>
+            <div class="mt-3">
+                <a href="{% url 'event-details' event.event.id %}" class="inline-block bg-gradient-to-r from-blue-500/70 to-indigo-500/70 hover:from-blue-600/90 hover:to-indigo-600/90 backdrop-blur-sm text-white font-bold rounded-full py-2 px-4 text-center transition-all duration-200 shadow-lg">View Details</a>
+            </div>
+            {% comment %} remove rsvp {% endcomment %}
+            <div class="mt-3">
+                <a href="{% url 'rsvp_r' event.event.id %}?next={% url 'view-rsvps' user.id %}" class="inline-block bg-gradient-to-r from-red-500/70 to-pink-500/70 hover:from-red-600/90 hover:to-pink-600/90 backdrop-blur-sm text-white font-bold rounded-full py-2 px-4 text-center transition-all duration-200 shadow-lg">Remove RSVP</a>
+            </div>
+        </div>
+        {% empty %}
+        <p class="font-bold text-center text-2xl text-slate-100">NO RSVPs Found, RSVP a event now!</p>
+        </div>
+        {% endfor %}
 </div>
 {% endblock %}

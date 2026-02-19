@@ -1,83 +1,111 @@
-{% comment %} For mobile {% endcomment %}
-<div id="mobile-nav" class="hidden bg-slate-900/60 backdrop-blur-lg border border-slate-700/40 w-1/2 h-full fixed top-0 left-0 z-50 flex justify-center" id="mobile-menu">
-    <ul class="list-style-none flex flex-col justify-center gap-4 m-0 p-0 text-slate-300 ">        
-        <li class="mx-4 bg-slate-800/50 backdrop-blur-lg p-4 rounded-xl border border-slate-700/40 text-slate-100 text-center ">
-            <a href="{% url "home" %}" class=" text-xl font-bold text-white">Home</a>
-        </li>
-        <li class="mx-4 bg-slate-800/50 backdrop-blur-lg p-4 rounded-xl border border-slate-700/40 text-slate-100 text-center">
-            <a href="{% url "dashboard" %}" class=" text-xl font-bold text-white">Events</a>
-        </li>
-        {% if user.is_authenticated %}
-        <li class="mx-4 bg-slate-800/50 backdrop-blur-lg p-4 rounded-xl border border-slate-700/40 text-slate-100 text-center">
-            <a href="{% url "sign-out" %}" class=" text-xl font-bold text-white">Sign out</a>
-        </li>
-        {% else %}
-        <li class="mx-4 bg-slate-800/50 backdrop-blur-lg p-4 rounded-xl border border-slate-700/40 text-slate-100 text-center">
-            <a href="{% url "sign-in" %}" class=" text-xl font-bold text-white">Sign in</a>
-        </li>
-        <li class="mx-4 bg-slate-800/50 backdrop-blur-lg p-4 rounded-xl border border-slate-700/40 text-slate-100 text-center">
-            <a href="{% url "sign-up" %}" class=" text-xl font-bold text-white">Sign up</a>
-        </li>
-        {% endif %}
-        {% load core_user_filters %}
-        {% if user.is_superuser %}
-            <a href="{% url 'admin-dashboard'%}" class="self-center">
-        {% elif user|in_group:"Organizer" %}
-            <a href="{% url 'organizer-dashboard' user.id %}" class="self-center">
-        {% elif user|in_group:"Participants" %}
-            <a href="{% url 'user-dashboard' user.id %}" class="self-center">
-        {% else %}
-            <a href="#" class="self-center">
-        {% endif %}
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-10">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-        </svg>
-        </a>
-    </ul>
-</div>
+{% load core_user_filters %}
+<!-- Modern Responsive Navbar -->
+<nav class="bg-slate-900/60 backdrop-blur-lg border-b border-slate-700/40 sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+            
+            <!-- Logo/Brand -->
+            <div class="flex items-center">
+                <a href="{% url 'home' %}" class="text-2xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">Event Manager</a>
+            </div>
 
+            <!-- Desktop Navigation -->
+            <div class="hidden md:flex items-center gap-8">
+                <a href="{% url 'home' %}" class="text-slate-300 hover:text-white transition-colors duration-200 font-medium">Home</a>
+                <a href="{% url 'dashboard' %}" class="text-slate-300 hover:text-white transition-colors duration-200 font-medium">Events</a>
+                
+                {% if user.is_authenticated %}
+                    <a href="{% url 'sign-out' %}" class="text-slate-300 hover:text-white transition-colors duration-200 font-medium">Sign Out</a>
+                {% else %}
+                    <a href="{% url 'sign-in' %}" class="text-slate-300 hover:text-white transition-colors duration-200 font-medium">Sign In</a>
+                    <a href="{% url 'sign-up' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-colors duration-200 font-medium">Sign Up</a>
+                {% endif %}
+            </div>
 
-{% comment %} For PC {% endcomment %}
-<div class="bg-slate-900/60 backdrop-blur-lg m-4 p-4 shadow-lg rounded-xl border border-slate-700/40">
-    <ul class="list-style-none flex justify-between gap-4 m-0 p-0 text-slate-300">
-        <button id="mobile-menu-button" class="md:hidden flex items-center justify-center">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 5.25h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5" />
-            </svg>
-        </button>
-        <li class="md:flex hidden items-center justify-center">
-            <a href="{% url "home" %}" class="pl-5 text-xl font-bold text-white">Home</a>
-        </li>
-        <li class="md:flex hidden items-center justify-center">
-            <a href="{% url "dashboard" %}" class="pl-5 text-xl font-bold text-white">Events</a>
-        </li>
-        {% if user.is_authenticated %}
-        <li class="md:flex hidden items-center justify-center">
-            <a href="{% url "sign-out" %}" class="pl-5 text-xl font-bold text-white">Sign out</a>
-        </li>
-        {% else %}
-        <li class="md:flex hidden items-center justify-center">
-            <a href="{% url "sign-in" %}" class="pl-5 text-xl font-bold text-white">Sign in</a>
-        </li>
-        <li class="md:flex hidden items-center justify-center">
-            <a href="{% url "sign-up" %}" class="pl-5 text-xl font-bold text-white">Sign up</a>
-        </li>
-        {% endif %}
-        <p>User groups: {{ user.id|join:", " }}</p>
-        {% load core_user_filters %}
-        {% if user.is_superuser %}
-            <a href="{% url 'admin-dashboard'%}" class="justify-self-end">
-        {% elif user|in_group:"Organizer" %}
-            <a href="{% url 'organizer-dashboard' user.id %}" class="justify-self-end">
-        {% elif user|in_group:"Participants" %}
-            <a href="{% url 'user-dashboard' user.id %}" class="justify-self-end">
-        {% else %}
-            <a href="#" class="justify-self-end">
-        {% endif %}
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-10">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-        </svg>
-        </a>
+            <!-- Profile & Dashboard -->
+            <div class="hidden md:flex items-center gap-4">
+                {% if user.is_authenticated %}
+                    <div class="flex items-center gap-3">
+                        <span class="text-sm text-slate-300">{{ user.username }}</span>
+                        <a href="{% if user.is_superuser %}{% url 'admin-dashboard' %}{% elif user|in_group:'Organizer' %}{% url 'organizer-dashboard' user.id %}{% elif user|in_group:'Participants' %}{% url 'user-dashboard' user.id %}{% else %}#{% endif %}" class="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 hover:shadow-lg hover:shadow-indigo-500/50 transition-all duration-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-white">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                            </svg>
+                        </a>
+                    </div>
+                {% else %}
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full bg-slate-700/50">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-slate-300">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                        </svg>
+                    </div>
+                {% endif %}
+            </div>
 
-    </ul> 
-</div>
+            <!-- Mobile Menu Button -->
+            <button id="mobile-menu-btn" class="md:hidden flex items-center justify-center w-10 h-10 rounded-lg bg-slate-800/50 hover:bg-slate-700/50 transition-colors duration-200">
+                <svg id="menu-open-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-white">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 5.25h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5" />
+                </svg>
+                <svg id="menu-close-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-white hidden">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div id="mobile-menu" class="hidden md:hidden border-t border-slate-700/40">
+            <div class="px-2 pt-2 pb-3 space-y-1">
+                <a href="{% url 'home' %}" class="block px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-800/50 hover:text-white transition-colors duration-200 font-medium">Home</a>
+                <a href="{% url 'dashboard' %}" class="block px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-800/50 hover:text-white transition-colors duration-200 font-medium">Events</a>
+                
+                {% if user.is_authenticated %}
+                    <a href="{% url 'sign-out' %}" class="block px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-800/50 hover:text-white transition-colors duration-200 font-medium">Sign Out</a>
+                {% else %}
+                    <a href="{% url 'sign-in' %}" class="block px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-800/50 hover:text-white transition-colors duration-200 font-medium">Sign In</a>
+                    <a href="{% url 'sign-up' %}" class="block px-3 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white transition-colors duration-200 font-medium text-center">Sign Up</a>
+                {% endif %}
+
+                {% if user.is_authenticated %}
+                    <div class="border-t border-slate-700/40 pt-2 mt-2">
+                        {% if user.is_superuser %}
+                            <a href="{% url 'admin-dashboard' %}" class="block px-3 py-2 rounded-lg bg-slate-800/50 text-white hover:bg-slate-700/50 transition-colors duration-200 font-medium text-center">Admin Dashboard</a>
+                        {% elif user|in_group:'Organizer' %}
+                            <a href="{% url 'organizer-dashboard' user.id %}" class="block px-3 py-2 rounded-lg bg-slate-800/50 text-white hover:bg-slate-700/50 transition-colors duration-200 font-medium text-center">Organizer Dashboard</a>
+                        {% elif user|in_group:'Participants' %}
+                            <a href="{% url 'user-dashboard' user.id %}" class="block px-3 py-2 rounded-lg bg-slate-800/50 text-white hover:bg-slate-700/50 transition-colors duration-200 font-medium text-center">Dashboard</a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</nav>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const menuOpenIcon = document.getElementById('menu-open-icon');
+        const menuCloseIcon = document.getElementById('menu-close-icon');
+
+        function toggleMobileMenu() {
+            mobileMenu.classList.toggle('hidden');
+            menuOpenIcon.classList.toggle('hidden');
+            menuCloseIcon.classList.toggle('hidden');
+        }
+
+        function closeMobileMenu() {
+            mobileMenu.classList.add('hidden');
+            menuOpenIcon.classList.remove('hidden');
+            menuCloseIcon.classList.add('hidden');
+        }
+
+        mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+
+        // Close menu when clicking on a link
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', closeMobileMenu);
+        });
+    });
+</script>

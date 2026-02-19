@@ -1,0 +1,106 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>{% block title %}Event Management{% endblock title %}</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+        {% comment %} <link rel="stylesheet" href="{% static 'css/style.css' %}"> {% endcomment %}
+        <style>
+        </style>
+    </head>
+    <body class="mx-auto bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white">
+
+        {% if messages %}
+        <ul class="messages col-span-2 text-center mb-4">
+            {% for message in messages %}
+            <li class=" text-white 
+            {% if message.tags == "error" %}p-4 bg-red-600/50 backdrop-blur-lg border border-red-400/40 rounded-lg{% endif %}
+            {% if message.tags == "success" %}p-4 bg-green-600/50 backdrop-blur-lg border border-green-400/40 rounded-lg{% endif %}
+            {% if message.tags == "info" %}p-4 bg-slate-800/70 backdrop-blur-lg border border-slate-700/40 rounded-lg{% endif %}">
+            {{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
+        <div class="md:w-full min-h-dvh  justify-self-center px-5 h-auto mx-auto">
+        {% block content %}
+    
+    <div class="flex flex-col lg:flex-row gap-3 p-3">
+    <!-- Mobile Toggle Button -->
+    <button id="mobile-menu-toggle" class="lg:hidden fixed top-4 left-4 z-50 bg-indigo-600 hover:bg-indigo-700 text-white p-2 rounded-md transition">
+        <svg id="menu-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+        <svg id="close-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+    </button>
+
+    <!-- Sidebar Navigation -->
+    <aside id="mobile-menu" class="hidden lg:flex fixed lg:static top-16 left-0 w-full lg:w-80 h-screen lg:h-auto lg:min-h-screen bg-slate-901/60 backdrop-blur-lg border border-slate-700/40 rounded-xl z-40 flex-col lg:flex-col p-4 lg:p-0">
+        <nav class="mt-10 lg:mt-10 flex flex-col gap-2 lg:gap-0 w-full">
+            {% block sidebar_links %}
+            <!-- Sidebar links will be defined in child templates -->
+            {% endblock sidebar_links %}
+        </nav>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="w-full lg:flex-1 bg-slate-901/60 backdrop-blur-lg border border-slate-700/40 rounded-xl h-auto min-h-screen flex flex-col justify-start">
+        {% block dashboard_content %}
+        <div class="flex flex-col justify-center items-center p-4">
+            <h1 class="text-3xl font-bold text-slate-100 mb-4">{% block dashboard_title %}Welcome to Dashboard{% endblock dashboard_title %}</h1>
+            <p class="text-slate-300 text-lg">{% block dashboard_description %}Use the sidebar to navigate through different sections of the dashboard.{% endblock dashboard_description %}</p>
+        </div>
+        {% endblock dashboard_content %}
+    </main>
+</div>
+
+<!-- Overlay for mobile menu -->
+<div id="mobile-menu-overlay" class="hidden fixed inset-0 bg-black/50 z-30 lg:hidden"></div>
+
+{% endblock content %}
+</div>
+<div class="bg-slate-900/60 backdrop-blur-lg d-flex m-4 p-4 shadow-lg rounded-xl border border-slate-700/40 text-slate-300">
+    <p>&copy; 2024 Event Management</p>
+</div>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
+        const menuIcon = document.getElementById('menu-icon');
+        const closeIcon = document.getElementById('close-icon');
+
+        function toggleMobileMenu() {
+            mobileMenu.classList.toggle('hidden');
+            mobileMenuOverlay.classList.toggle('hidden');
+            menuIcon.classList.toggle('hidden');
+            closeIcon.classList.toggle('hidden');
+        }
+
+        function closeMobileMenu() {
+            mobileMenu.classList.add('hidden');
+            mobileMenuOverlay.classList.add('hidden');
+            menuIcon.classList.remove('hidden');
+            closeIcon.classList.add('hidden');
+        }
+
+        mobileMenuToggle.addEventListener('click', toggleMobileMenu);
+        mobileMenuOverlay.addEventListener('click', closeMobileMenu);
+        
+        // Close menu when clicking on a link
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', closeMobileMenu);
+        });
+    });
+</script>
+
+    </body>
+</html>

@@ -1,23 +1,127 @@
 {% extends "template.html" %}
-{% block title %}Home{% endblock title %}
+{% block title %}Home - Event Manager{% endblock title %}
 {% block content %}
-    <h1 class="p-5"> WELCOME URAURARUARUARUARUARU </h1>
-    {% if user.is_authenticated %}
-        <div>
-            <a href={% url "sign-up" %} class="bg-blue-500 p-5 mb-5 cursor-pointer"> LOG OUT </a>
+<div class="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900">
+    
+    <!-- Hero Section -->
+    <section class="px-4 py-20 sm:py-32">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-12">
+                <h1 class="text-5xl sm:text-6xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+                    EventHub
+                </h1>
+                <p class="text-xl sm:text-2xl text-slate-300 mb-8 max-w-3xl mx-auto">
+                    Your all-in-one platform for organizing, discovering, and participating in amazing events.
+                </p>
+                
+                {% if user.is_authenticated %}
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <a href="{% url 'dashboard' %}" class="inline-block bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-3 px-8 rounded-lg transition-all duration-200 shadow-lg hover:shadow-indigo-500/50">
+                            Explore Events
+                        </a>
+                        <a href="{% url 'sign-out' %}" class="inline-block bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 px-8 rounded-lg transition-all duration-200">
+                            Sign Out
+                        </a>
+                    </div>
+                {% else %}
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <a href="{% url 'sign-in' %}" class="inline-block bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-3 px-8 rounded-lg transition-all duration-200 shadow-lg hover:shadow-indigo-500/50">
+                            Sign In
+                        </a>
+                        <a href="{% url 'sign-up' %}" class="inline-block bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 px-8 rounded-lg transition-all duration-200">
+                            Create Account
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
         </div>
-    {% else %}
-        <h1> BRUUHH </h1>
-        <a href={% url "sign-in" %}>    
-            <div class="bg-blue-500 p-5 cursor-pointer">
-                LOG IN 
+    </section>
+
+    <!-- Features Section -->
+    <section class="px-4 py-20 bg-slate-800/50">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-4xl font-bold text-center mb-16 text-white">Why Choose EventHub?</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="bg-slate-800/60 backdrop-blur-lg border border-slate-700/40 p-8 rounded-xl hover:border-indigo-500/40 transition-all duration-200">
+                    <div class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-lg flex items-center justify-center mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-white">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">Easy Event Management</h3>
+                    <p class="text-slate-300">Create, organize, and manage events effortlessly with our intuitive interface.</p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="bg-slate-800/60 backdrop-blur-lg border border-slate-700/40 p-8 rounded-xl hover:border-indigo-500/40 transition-all duration-200">
+                    <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-white">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">Community Focus</h3>
+                    <p class="text-slate-300">Connect with organizers and participants. Build your network and grow your community.</p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="bg-slate-800/60 backdrop-blur-lg border border-slate-700/40 p-8 rounded-xl hover:border-indigo-500/40 transition-all duration-200">
+                    <div class="w-12 h-12 bg-gradient-to-br from-pink-500 to-orange-500 rounded-lg flex items-center justify-center mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-white">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 001.591-.059 9.47 9.47 0 005.713-5.713 9.957 9.957 0 00.59-1.591A9.387 9.387 0 0019.128 15M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">Real-time Updates</h3>
+                    <p class="text-slate-300">Get instant notifications about events you're interested in and RSVP management.</p>
+                </div>
             </div>
-        </a>
-        <a href={% url "sign-up" %}>
-            <div class="bg-blue-500 p-5 cursor-pointer"> 
-                Register
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="px-4 py-20">
+        <div class="max-w-4xl mx-auto">
+            <div class="bg-gradient-to-r from-indigo-600/20 to-purple-600/20 backdrop-blur-lg border border-indigo-500/20 rounded-2xl p-12 text-center">
+                <h2 class="text-3xl sm:text-4xl font-bold text-white mb-6">Ready to Get Started?</h2>
+                <p class="text-lg text-slate-300 mb-8">Join thousands of event organizers and enthusiasts on EventHub today.</p>
+                
+                {% if not user.is_authenticated %}
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <a href="{% url 'sign-up' %}" class="inline-block bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white font-bold py-3 px-8 rounded-lg transition-all duration-200 shadow-lg hover:shadow-indigo-500/50">
+                            Sign Up Now
+                        </a>
+                        <a href="{% url 'sign-in' %}" class="inline-block bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 px-8 rounded-lg transition-all duration-200">
+                            Sign In
+                        </a>
+                    </div>
+                {% else %}
+                    <a href="{% url 'dashboard' %}" class="inline-block bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white font-bold py-3 px-8 rounded-lg transition-all duration-200 shadow-lg hover:shadow-indigo-500/50">
+                        Browse Events
+                    </a>
+                {% endif %}
             </div>
-        </a>
-        
-    {% endif %}
+        </div>
+    </section>
+
+    <!-- Footer Stats -->
+    <section class="px-4 py-16 border-t border-slate-700/40">
+        <div class="max-w-6xl mx-auto">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-8 text-center">
+                <div>
+                    <div class="text-4xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">1000+</div>
+                    <p class="text-slate-400 mt-2">Events Hosted</p>
+                </div>
+                <div>
+                    <div class="text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">5000+</div>
+                    <p class="text-slate-400 mt-2">Active Members</p>
+                </div>
+                <div>
+                    <div class="text-4xl font-bold bg-gradient-to-r from-pink-400 to-orange-400 bg-clip-text text-transparent">50+</div>
+                    <p class="text-slate-400 mt-2">Event Categories</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
 {% endblock %}
