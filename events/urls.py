@@ -1,10 +1,12 @@
 from django.urls import path, include
 from events.views import dashboard, event_details,event_form, delete_event, edit_event, rsvp_event, rsvp_removed, rsvp_activation
+from events.views import dashboardClassView
 from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('', dashboard, name = "dashboard"),
+    # path('', dashboard, name = "dashboard"),
+    path('', dashboardClassView.as_view(), name = "dashboard"),
     path('details/<int:event_id>/', event_details, name = "event-details"),
     path("add-events/by/<int:usr_id>/", event_form, name = "event_form"),
     path("delete-event/<int:event_id>/", delete_event, name="delete-event"),

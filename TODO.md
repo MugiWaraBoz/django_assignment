@@ -35,8 +35,14 @@
   - [✅] Navbar Updated
 - [✅] Website UI resposive
 - [✅] SQL Optimization
+- [] Custom User Mode created and configured
+- [] Change Password/ Reset Password
 
 ## FIX
 
 - [] RSPV filter need to be fixed for each dashboards
 - [] RSVP JavaScripts need to be fixed, searching not working properly
+
+## Refactoring
+
+- [] Converted Atleast 5 function that can be changable to ClassBasedView

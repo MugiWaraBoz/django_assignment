@@ -6,6 +6,9 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.tokens import default_token_generator
 
+# Class Based Views Import
+from django.views.generic import ListView
+
 from events.models import Event,Category,RSVP
 from events.forms import EventModelForm
 
@@ -21,67 +24,164 @@ def is_participant(u):
     return u.groups.filter(name="Participants").exists()
 
 # Create your views here.
-def dashboard(request):
-    events = Event.objects.all().select_related('category').prefetch_related('rsvp__participants')
-    events = events.annotate(
-        going_count=Count('rsvp', filter=Q(rsvp__is_going=True))
-    )
-    categories = Category.objects.all()
-    current_date = date.today()
-    category_id = request.GET.get('category')
-    filter_events = request.GET.get('filter_events')
-    search_query = request.GET.get('search')
+# def dashboard(request):
+#     events = Event.objects.all().select_related('category').prefetch_related('rsvp__participants')
+#     events = events.annotate(
+#         going_count=Count('rsvp', filter=Q(rsvp__is_going=True))
+#     )
+#     categories = Category.objects.all()
+#     current_date = date.today()
+#     category_id = request.GET.get('category')
+#     filter_events = request.GET.get('filter_events')
+#     search_query = request.GET.get('search')
     
-    has_rsvp = RSVP.objects.select_related('event', 'participants')
-    if request.user.is_authenticated:
-        rsvped_event_ids = has_rsvp.filter(participants = request.user, is_going=True).values_list('event_id', flat=True)
-    # print(rsvped_event_ids)
+#     has_rsvp = RSVP.objects.select_related('event', 'participants')
+#     if request.user.is_authenticated:
+#         rsvped_event_ids = has_rsvp.filter(participants = request.user, is_going=True).values_list('event_id', flat=True)
+#     # print(rsvped_event_ids)
 
 
-    count = events.aggregate(        
-        total_events = Count('id', distinct=True),
-        Today_events = Count('id',filter=Q(date=current_date)),
-        upcoming_events = Count('id', filter=Q(date__gt=current_date), distinct=True),
-        past_events = Count('id', filter=Q(date__lt=current_date), distinct=True),
-    )
+#     count = events.aggregate(        
+#         total_events = Count('id', distinct=True),
+#         Today_events = Count('id',filter=Q(date=current_date)),
+#         upcoming_events = Count('id', filter=Q(date__gt=current_date), distinct=True),
+#         past_events = Count('id', filter=Q(date__lt=current_date), distinct=True),
+#     )
     
-    # Total Participation count
+#     # Total Participation count
     
-    participants_cnt = has_rsvp.filter(is_going=True).aggregate(total_participants=Count('participants', distinct=True))['total_participants']
-    # print(participants_cnt, "---===")
+#     participants_cnt = has_rsvp.filter(is_going=True).aggregate(total_participants=Count('participants', distinct=True))['total_participants']
+#     # print(participants_cnt, "---===")
 
-    if filter_events == "Upcoming Events":
-        events = events.filter(date__gt=current_date)
-    elif filter_events == "Past Events":
-        events = events.filter(date__lt=current_date)
-    elif filter_events == "All Events":
-        events = events
-    else:
-        events = events.filter(date=current_date)
+#     if filter_events == "Upcoming Events":
+#         events = events.filter(date__gt=current_date)
+#     elif filter_events == "Past Events":
+#         events = events.filter(date__lt=current_date)
+#     elif filter_events == "All Events":
+#         events = events
+#     else:
+#         events = events.filter(date=current_date)
 
-    if category_id:
-        events = events.filter(category__id=category_id)
+#     if category_id:
+#         events = events.filter(category__id=category_id)
 
-    if search_query:
-        events = events.filter(Q(name__icontains=search_query) | Q(description__icontains=search_query))
+#     if search_query:
+#         events = events.filter(Q(name__icontains=search_query) | Q(description__icontains=search_query))
 
-    context = {
-        "Events" : events,
-        "categories": categories,
-        "count": count,
-        "participants_cnt" : participants_cnt,
-        "filter_events": filter_events,
-        "search_query": search_query,
-    }
+#     context = {
+#         "Events" : events,
+#         "categories": categories,
+#         "count": count,
+#         "participants_cnt" : participants_cnt,
+#         "filter_events": filter_events,
+#         "search_query": search_query,
+#     }
 
-    if request.user.is_authenticated:
-        context["rsvped_event_ids"] = rsvped_event_ids
-    # print(events.values_list())
+#     if request.user.is_authenticated:
+#         context["rsvped_event_ids"] = rsvped_event_ids
+#     # print(events.values_list())
 
-    if not events.exists():
-        messages.info(request, "No events found matching your criteria.")
+#     if not events.exists():
+#         messages.info(request, "No events found matching your criteria.")
     
-    return render(request, 'dashboard.html', context)
+#     return render(request, 'dashboard.html', context)
+
+
+class dashboardClassView(ListView):
+    model = Event
+    template_name = "dashboard.html"
+    context_object_name = "Events"
+
+    def get_base_queryset(self):
+        # Count using annotate
+        return Event.objects.all().select_related('category').prefetch_related(
+            'rsvp__participants'
+            ).annotate (
+            going_count=Count('rsvp', filter=Q(rsvp__is_going=True))
+        )
+
+
+    def get_queryset(self):
+        queryset = self.get_base_queryset()
+        
+        # Retrive Data for filtering
+        current_date = date.today()  
+        category_id = self.request.GET.get('category')
+        filter_events = self.request.GET.get('filter_events')
+        search_query = self.request.GET.get('search')
+        
+        # Filtering accordingly 
+        if filter_events == "Upcoming Events":
+            queryset = queryset.filter(date__gt=current_date)
+        elif filter_events == "Past Events":
+            queryset = queryset.filter(date__lt=current_date)
+        elif filter_events == "All Events":
+            queryset = queryset
+        else:
+            queryset = queryset.filter(date=current_date)
+
+        if category_id:
+            queryset = queryset.filter(category__id=category_id)
+
+        if search_query:
+            queryset = queryset.filter(
+                Q(name__icontains=search_query) | 
+                Q(description__icontains=search_query)
+            )
+        
+        return queryset.order_by('-date')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        events = self.get_base_queryset()
+        current_date = date.today()  
+        count = events.aggregate(        
+            total_events = Count('id', distinct=True),
+            Today_events = Count('id',filter=Q(date=current_date)),
+            upcoming_events = Count('id', filter=Q(date__gt=current_date), distinct=True),
+            past_events = Count('id', filter=Q(date__lt=current_date), distinct=True),
+        )
+        
+        rsvp = RSVP.objects.select_related('event', 'participants')
+        participants_cnt = rsvp.filter(is_going=True).aggregate(total_participants=Count('participants', distinct=True))['total_participants']
+        # Grabs RSVP'ed event ids to avoid RSVP'ing same event again
+        if self.request.user.is_authenticated:
+            rsvped_event_ids = rsvp.filter(participants = self.request.user, is_going=True).values_list('event_id', flat=True)
+
+                                       # pythons date import
+
+        # Counts using aggregate
+    
+        if self.request.user.is_authenticated:
+            context["rsvped_event_ids"] = rsvped_event_ids
+        
+        categories = Category.objects.all()
+        context["categories"] = categories
+        context["count"] = count
+        context["participants_cnt"] = participants_cnt
+        
+        if not self.get_base_queryset:
+            messages.info(self.request, "No events found matching your criteria.")
+
+        context["filter_events"] = self.request.GET.get('filter_events')
+        context["search_query"] = self.request.GET.get('search')
+        # context = {
+        #     "Events" : events,
+        #     "categories": categories,
+        #     "count": count,
+        #     "participants_cnt" : participants_cnt,
+        #     # "filter_events": filter_events,
+        #     # "search_query": search_query,
+        # } 
+        #   
+        
+        return context
+    
+    
+
+
+
 
 def event_details(request, event_id):
     event = Event.objects.prefetch_related('rsvp__participants', 'organizers').get(id=event_id)
