@@ -1,7 +1,9 @@
 from django.urls import path, include
-from user.views import change_user_group, manage_all_events, manage_events, manage_roles,create_event_org, organizers, role_details, role_details, participants, sign_in, sign_out, sign_up, activate_account, user_dashboard, admin_dashboard, organizer_dashboard, usr_view_rsvps, view_rsvps, admin_view_rsvps
-
-from events.views import event_form
+from user.views import change_user_group, manage_all_events, manage_events, manage_roles
+from user.views import create_event_org, organizers, role_details, role_details, participants 
+from user.views import sign_in, sign_out, sign_up, activate_account, user_dashboard 
+from user.views import admin_dashboard, organizer_dashboard, usr_view_rsvps, view_rsvps 
+from user.views import admin_view_rsvps
 
 urlpatterns = [
     path("sign-up/", sign_up, name = "sign-up"), 
@@ -20,7 +22,7 @@ urlpatterns = [
     path("organizer-dashboard/<int:id>/", organizer_dashboard, name = "organizer-dashboard"),
     path("organizer-dashboard/<int:id>/events/manage/", manage_events, name = "manage-events"),
     path("organizer-dashboard/<int:id>/rsvps/view/", view_rsvps, name = "view-rsvps"),
-    path("event/create/", event_form, name="create-event"),
+    # path("event/create/<int:usr_id>", event_form, name="create-event"),
 
     path("user-dashboard/<int:id>/", user_dashboard, name = "user-dashboard"),
     path("user-dashboard/<int:id>/rsvps/view/", usr_view_rsvps, name = "usr-view-rsvps"),

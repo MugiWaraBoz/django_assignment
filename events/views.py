@@ -5,9 +5,10 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.tokens import default_token_generator
+from django.urls import reverse_lazy
 
 # Class Based Views Import
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from events.models import Event,Category,RSVP
 from events.forms import EventModelForm
@@ -166,15 +167,6 @@ class dashboardClassView(ListView):
 
         context["filter_events"] = self.request.GET.get('filter_events')
         context["search_query"] = self.request.GET.get('search')
-        # context = {
-        #     "Events" : events,
-        #     "categories": categories,
-        #     "count": count,
-        #     "participants_cnt" : participants_cnt,
-        #     # "filter_events": filter_events,
-        #     # "search_query": search_query,
-        # } 
-        #   
         
         return context
     
@@ -183,48 +175,99 @@ class dashboardClassView(ListView):
 
 
 
-def event_details(request, event_id):
-    event = Event.objects.prefetch_related('rsvp__participants', 'organizers').get(id=event_id)
-    context = {
-        "event": event,
-        "count": event.rsvp.aggregate(participants_cnt=Count('id')),
-    }
+# def event_details(request, event_id):
+#     event = Event.objects.prefetch_related('rsvp__participants', 'organizers').get(id=event_id)
+#     context = {
+#         "event": event,
+#         "count": event.rsvp.aggregate(participants_cnt=Count('id')),
+#     }
 
-    return render(request, "event-details.html", context)
+#     return render(request, "event-details.html", context)
 
-@login_required(login_url="error-405")
-@user_passes_test(lambda u: is_admin(u) or is_Organizer(u), login_url="home")
-def event_form(request, usr_id):
-    form = EventModelForm()
-    org_search_query = request.GET.get('search')
-    organizers = User.objects.filter(groups__name="Organizer")
+class event_detailsView(DetailView):
+    model = Event 
+    template_name  = "event-details.html"
+    pk_url_kwarg = 'event_id'
 
-    if org_search_query:
-        organizers = organizers.filter(username__icontains=org_search_query)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        events = Event.objects.prefetch_related('rsvp__participants', 'organizers').get(id=self.object.pk) 
+        context['event'] = events
+        context['count'] = events.rsvp.aggregate(participants_cnt=Count('id')),
+        return context
+
+# @login_required(login_url="error-405")
+# @user_passes_test(lambda u: is_admin(u) or is_Organizer(u), login_url="home")
+# def event_form(request, usr_id):
+#     form = EventModelForm()
+#     org_search_query = request.GET.get('search')
+#     organizers = User.objects.filter(groups__name="Organizer")
+
+#     if org_search_query:
+#         organizers = organizers.filter(username__icontains=org_search_query)
         
-    if request.method == "POST":
-        form = EventModelForm(request.POST, request.FILES)
+#     if request.method == "POST":
+#         form = EventModelForm(request.POST, request.FILES)
+#         form.fields["organizers"].queryset = organizers
+#         if form.is_valid():
+#             event = form.save(commit=False)
+#             event.save()
+#             form.save_m2m()
+#             event.organizers.add(User.objects.get(id=usr_id))
+#             messages.success(request, "Event created successfully!")
+#             return redirect('dashboard')
+#         else:
+#             messages.error(request, "Something went wrong.")
+#     else :            
+#         form.fields["organizers"].queryset = organizers
+
+#     context = {
+#         "form": form,
+#         # "title": "Add a New Event",
+#         "orgs": org_search_query
+#     }
+
+#     return render(request, "event-form.html", context)
+
+# -- add permissions
+class event_formView(CreateView):
+    model = Event
+    form_class = EventModelForm
+    permissoin_required = 'events.add_event'
+    success_url = reverse_lazy("dashboard")
+    pk_url_kwarg = "usr_id"
+
+    template_name = "event-form.html"
+    
+    def get_form(self, form_class = None):
+        form = super().get_form(form_class)
+        search = self.request.GET.get("search")
+        organizers = User.objects.filter(groups__name="Organizer")
+
+        if search:
+            organizers = organizers.filter(username__icontains=search)
+        
         form.fields["organizers"].queryset = organizers
-        if form.is_valid():
-            event = form.save(commit=False)
-            event.save()
-            form.save_m2m()
-            event.organizers.add(User.objects.get(id=usr_id))
-            messages.success(request, "Event created successfully!")
-            return redirect('dashboard')
-        else:
-            messages.error(request, "Something went wrong.")
-    else :            
-        form.fields["organizers"].queryset = organizers
 
-    context = {
-        "form": form,
-        # "title": "Add a New Event",
-        "orgs": org_search_query
-    }
+        return form
+    
+    def form_valid(self, form):
+        usr_id = self.object.usr_id
 
-    return render(request, "event-form.html", context)
+        event = form.save(commit=False)
+        event.save()
+        form.save_m2m()
 
+        event.organizers.add(User.objects.get(id=usr_id))
+
+        messages.success(self.request, "Event created successfully!")
+        return super().form_valid(form)
+    
+    def form_invalid(self, form):
+        messages.error(self.request, "Something went wrong.")
+        return super().form_invalid(form)
+    
+    
 @login_required(login_url="error-405")
 @user_passes_test(lambda u: is_admin(u) or is_Organizer(u), login_url="home")
 def edit_event(request, event_id):
@@ -256,6 +299,10 @@ def edit_event(request, event_id):
 
     return render(request, "event-form.html", context)
 
+class edit_eventView(UpdateView):
+    # TODO
+    pass
+
 @login_required(login_url="error-405")
 @user_passes_test(lambda u: is_admin(u) or is_Organizer(u), login_url="home")
 def delete_event(request, event_id):
@@ -273,6 +320,10 @@ def delete_event(request, event_id):
 
     # print(next_url)
     return redirect(next_url)
+
+class delete_eventView(DeleteView):
+    # TODO
+    pass
 
 
 @login_required(login_url="error-405")
