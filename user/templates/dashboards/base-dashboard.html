@@ -7,8 +7,8 @@
         <title>{% block title %}Event Management{% endblock title %}</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        {% comment %} <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script> {% endcomment %}
-        <link rel="stylesheet" href="{% static 'css/style.css' %}">
+        <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+        {% comment %} <link rel="stylesheet" href="{% static 'css/style.css' %}"> {% endcomment %}
         <style>
         </style>
     </head>
@@ -43,7 +43,13 @@
     <!-- Sidebar Navigation -->
     <aside id="mobile-menu" class="hidden lg:flex fixed lg:static top-16 left-0 w-full lg:w-80 h-screen lg:h-auto lg:min-h-screen bg-slate-901/60 backdrop-blur-lg border border-slate-700/40 rounded-xl z-40 flex-col lg:flex-col p-4 lg:p-0">
         <nav class="mt-10 lg:mt-10 flex flex-col gap-2 lg:gap-0 w-full">
+            <h1 class="text-2xl font-bold mb-4 text-slate-100 text-center bg-slate-800/50 p-2 rounded-md">Account</h1>
+            <a href="{% url 'acc-details' user.id %}" class="py-3 px-4 hover:bg-slate-700/50 text-lg border-b border-slate-700/40 text-slate-100 hover:text-blue-100 rounded-md transition-all">Account Details</a>
+            <a href="{% url 'change-password' user.id %}" class="py-3 px-4 hover:bg-slate-700/50 text-lg border-b border-slate-700/40 text-slate-100 hover:text-blue-100 rounded-md transition-all">Change Password</a>
+            <a href="{% url 'reset-password' user.id %}" class="py-3 px-4 hover:bg-slate-700/50 text-lg border-b border-slate-700/40 text-slate-100 hover:text-blue-100 rounded-md transition-all">Reset Password</a>
+
             {% block sidebar_links %}
+            
             <!-- Sidebar links will be defined in child templates -->
             {% endblock sidebar_links %}
         </nav>

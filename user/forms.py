@@ -4,7 +4,12 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from events.forms import MixinStyleForm
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-    
+
+class EditProfileForm(MixinStyleForm, forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ["first_name", "last_name", "email"]
+
 class userCreationForm(MixinStyleForm, forms.ModelForm):
 
     ROLE_CHOICE = [

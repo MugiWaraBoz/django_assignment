@@ -8,12 +8,14 @@ from django.contrib.auth.decorators import login_required, user_passes_test, log
 from django.contrib.auth.tokens import default_token_generator
 from django.db.models import Prefetch
 
+from django.views.generic import TemplateView, UpdateView
+from django.contrib.auth.views import PasswordChangeView, PasswordResetView
 
 from datetime import date
 
 from events.models import RSVP, Event,Category
 from events.views import is_admin, is_Organizer, is_participant
-from user.forms import CustomAuthenticationForm, userCreationForm
+from user.forms import CustomAuthenticationForm, userCreationForm, EditProfileForm
 from user.models import Profile
 
 # Create your views here.
@@ -98,8 +100,54 @@ def activate_account(request, uid, token):
         messages.error(request, "Invalid Activation Link")
         return redirect("home")
 
-# ADMIN DASHBOARD VIEWS
 
+"""
+    profile settings
+
+"""
+class EditProfileView(UpdateView):
+    model = User
+    form_class = EditProfileForm
+    template_name = 'dashboards/update.html'
+    context_object_name = 'user'
+
+    def get_object(self):
+        return self.request.user
+    
+    def form_valid(self, form):
+        form.save()
+        return redirect("acc-details", self.object.pk)
+    
+class accDetailView(TemplateView):
+    template_name = "dashboards/admin-dashboard.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+
+        context['username'] = user.username
+        context['email'] = user.email
+        context['full_name'] = user.get_full_name()
+        context['member_since'] = user.date_joined
+        context['last_login'] = user.last_login
+        profile_picture = None
+        profile = getattr(user, 'profile', None)
+        if profile and profile.profile_img:
+            profile_picture = profile.profile_img
+        context['profile_picture'] = profile_picture
+
+        return context
+
+class changePassView(PasswordChangeView):
+    pass
+
+class resetPassView(PasswordResetView):
+    pass
+
+
+"""
+    ADMIN DASHBOARD VIEWS
+"""
 @login_required(login_url="home")
 @user_passes_test(is_admin, login_url="no-permission")
 def admin_dashboard(request):
@@ -176,7 +224,11 @@ def admin_view_rsvps(request):
     all_rsvps = RSVP.objects.select_related('event', 'participants').filter(participants=request.user)
     return render(request, "dashboards/admin/view-rsvps.html", {"rsvps": all_rsvps})
 
-# ORGANIZER DASHBOARD VIEWS
+
+"""
+    ORGANIZER DASHBOARD VIEWS
+"""
+
 @login_required(login_url="home")
 @user_passes_test(is_Organizer, login_url="no-permission")
 def organizer_dashboard(request, id):       
@@ -203,14 +255,15 @@ def create_event_org(request, id):
     return render(request, "dashboards/organizer/event_creation.html", {"id": id})
 
 
+"""
+    USER DASHBOARD VIEWS
+"""
 
 
-# USER DASHBOARD VIEWS
 @login_required(login_url="home")
 @user_passes_test(is_participant, login_url="no-permission")
 def user_dashboard(request, id): 
     return render(request, "dashboards/user-dashboard.html", {"id": id})
-
 
 @login_required(login_url="home")
 @user_passes_test(is_participant, login_url="no-permission")

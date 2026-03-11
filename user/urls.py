@@ -3,12 +3,18 @@ from user.views import change_user_group, manage_all_events, manage_events, mana
 from user.views import create_event_org, organizers, role_details, role_details, participants 
 from user.views import sign_in, sign_out, sign_up, activate_account, user_dashboard 
 from user.views import admin_dashboard, organizer_dashboard, usr_view_rsvps, view_rsvps 
-from user.views import admin_view_rsvps
+from user.views import admin_view_rsvps, accDetailView, changePassView, resetPassView, EditProfileView  
 
 urlpatterns = [
     path("sign-up/", sign_up, name = "sign-up"), 
     path("sign-in/", sign_in, name = "sign-in"),
     path("sign-out/", sign_out, name = "sign-out"),
+
+    path("acc-details/<int:usr_id>",accDetailView.as_view(),name='acc-details'),
+    path("change_password/<int:usr_id>",changePassView.as_view(),name='change-password'),
+    path("reset_password/<int:usr_id>",resetPassView.as_view(),name='reset-password'),
+    path("edit-profile/<int:usr_id>",EditProfileView.as_view(),name='edit-profile'),
+    
     
     path("admin-dashboard/", admin_dashboard, name = "admin-dashboard"), 
     path("admin-dashboard/manage-roles/", manage_roles, name = "manage-roles"),
