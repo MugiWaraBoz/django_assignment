@@ -8,15 +8,16 @@ from django.contrib.auth.decorators import login_required, user_passes_test, log
 from django.contrib.auth.tokens import default_token_generator
 from django.db.models import Prefetch
 from django.utils.decorators import method_decorator
+from django.urls import reverse_lazy
 
 from django.views.generic import TemplateView, UpdateView
-from django.contrib.auth.views import PasswordChangeView, PasswordResetView
+from django.contrib.auth.views import PasswordChangeView, PasswordResetView, PasswordResetConfirmView
 
 from datetime import date
 
 from events.models import RSVP, Event,Category
 from events.views import is_admin, is_Organizer, is_participant
-from user.forms import CustomAuthenticationForm, userCreationForm, EditProfileForm, CustomPasswordChangeForm
+from user.forms import CustomAuthenticationForm, userCreationForm, EditProfileForm, CustomPasswordChangeForm, CustomPasswordResetForm, CustomPasswordConfirmForm
 from user.models import Profile
 
 # Create your views here.
@@ -126,7 +127,7 @@ class EditProfileView(UpdateView):
     
 @method_decorator(permission_decorators, name='dispatch')
 class accDetailView(TemplateView):
-    template_name = "dashboards/base-dashboard.html"
+    template_name = "account/acc-details.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -152,8 +153,31 @@ class changePassView(PasswordChangeView):
 
 @method_decorator(permission_decorators, name='dispatch')
 class resetPassView(PasswordResetView):
-    pass
+    template_name = 'account/password_reset.html'
+    form_class = CustomPasswordResetForm
+    success_url = reverse_lazy('sign-in')
+    html_email_template_name = "account/reset_email.html"
 
+    def form_valid(self, form):
+        messages.success(self.request, "Password reset email has been sent if the email exists in our system.")
+        return super().form_valid(form)
+    
+
+class ConfirmResetPassView(PasswordResetConfirmView):
+    form_class = CustomPasswordConfirmForm
+    template_name = 'account/reset_confirm.html'
+    success_url = reverse_lazy('sign-in')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['protocol'] = 'https' if self.request.is_secure() else 'http'
+        context['domain'] = self.request.get_host()
+        return context
+    
+    def form_valid(self, form):
+        messages.success(self.request, "Your password has been reset successfully! You can now log in.")
+        return super().form_valid(form)
+    
 
 """
     ADMIN DASHBOARD VIEWS
@@ -161,7 +185,7 @@ class resetPassView(PasswordResetView):
 @login_required(login_url="home")
 @user_passes_test(is_admin, login_url="no-permission")
 def admin_dashboard(request):
-    return render(request, "dashboards/admin-dashboard.html")
+    return render(request, "dashboards/base-dashboard.html")
 
 @login_required(login_url="home")
 @user_passes_test(is_admin, login_url="no-permission")
@@ -242,7 +266,7 @@ def admin_view_rsvps(request):
 @login_required(login_url="home")
 @user_passes_test(is_Organizer, login_url="no-permission")
 def organizer_dashboard(request, id):       
-    return render(request, "dashboards/organizer-dashboard.html", {"id": id})   
+    return render(request, "dashboards/base-dashboard.html", {"id": id})   
 
 @login_required(login_url="home")
 @user_passes_test(is_Organizer, login_url="no-permission")
@@ -273,7 +297,7 @@ def create_event_org(request, id):
 @login_required(login_url="home")
 @user_passes_test(is_participant, login_url="no-permission")
 def user_dashboard(request, id): 
-    return render(request, "dashboards/user-dashboard.html", {"id": id})
+    return render(request, "dashboards/base-dashboard.html", {"id": id})
 
 @login_required(login_url="home")
 @user_passes_test(is_participant, login_url="no-permission")

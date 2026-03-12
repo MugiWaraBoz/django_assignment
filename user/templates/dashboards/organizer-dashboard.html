@@ -1,7 +1,5 @@
-{% extends "dashboards/base-dashboard.html" %}
-{% block title %}Organizer Dashboard{% endblock title %}
 
-{% block sidebar_links %}
+
 <a href="{% url 'manage-events' user.id %}" class="py-3 px-4 hover:bg-slate-700/50 text-lg border-b border-slate-700/40 text-slate-100 hover:text-blue-100 rounded-md transition-all">Manage Events</a>
 <a href="{% url 'view-rsvps' user.id %}" class="py-3 px-4 hover:bg-slate-700/50 text-lg border-b border-slate-700/40 text-slate-100 hover:text-blue-100 rounded-md transition-all">View RSVPs</a>
 
@@ -9,22 +7,3 @@
 <a href="{% url 'dashboard'%}" class="py-3 px-4 hover:bg-slate-700/50 text-lg border-b border-slate-700/40 text-slate-100 hover:text-blue-100 rounded-md transition-all">Back to event Dashboard</a>
 <a href="{% url 'home' %}" class="py-3 px-4 hover:bg-slate-700/50 text-lg border-b border-slate-700/40 text-slate-100 hover:text-blue-100 rounded-md transition-all">Back to Home</a>
 <a href="{% url 'sign-out' %}" class="py-3 px-4 hover:bg-slate-700/50 text-lg border-b border-slate-700/40 text-slate-100 hover:text-blue-100 rounded-md transition-all">Logout</a>
-{% endblock sidebar_links %}
-
-{% block dashboard_title %}Welcome to the Organizer Dashboard{% endblock dashboard_title %}
-{% block dashboard_description %}Use the sidebar to navigate through different sections of the dashboard.{% endblock dashboard_description %}
-
-{% block dashboard_content %}
-    {% block organizer_content %}
-    <div class="flex flex-col justify-center items-center p-4">
-        <h1 class="text-3xl font-bold text-slate-100 mb-4">Welcome to the Organizer Dashboard</h1>
-        <p class="text-slate-300 text-lg">Use the sidebar to navigate through different sections of the dashboard.</p>
-    </div>
-    {% endblock organizer_content %}
-{% endblock dashboard_content %}
-
-{% block script %}
-    {% block dashboard_script %}
-    // Add any JavaScript specific to the organizer dashboard here
-    {% endblock dashboard_script %}
-{% endblock script %}

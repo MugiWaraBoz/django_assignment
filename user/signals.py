@@ -25,3 +25,7 @@ def send_activation_email(sender, instance, created, **kwargs):
             )
         except Exception as e:
             print(f"❌ There was an error sending the activation link, please try again. {e}")
+
+@receiver(post_save, sender=User)
+def pass_change_email(sender, instance, created, **kwargs):
+    pass
