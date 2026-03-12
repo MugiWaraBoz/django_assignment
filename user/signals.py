@@ -3,11 +3,11 @@ from django.db.models.signals import pre_save, post_save, pre_delete, post_delet
 from django.dispatch import receiver
 from django.core.mail import send_mail
 from django.contrib.auth.tokens import default_token_generator
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import Group
+from django.conf import settings
 from decouple import config
-from event_management import settings
-  
-@receiver(post_save, sender=User)
+
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def send_activation_email(sender, instance, created, **kwargs):
     if created:
         # print("✅ User Created")
@@ -25,3 +25,7 @@ def send_activation_email(sender, instance, created, **kwargs):
             )
         except Exception as e:
             print(f"❌ There was an error sending the activation link, please try again. {e}")
+
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def pass_change_email(sender, instance, created, **kwargs):
+    pass

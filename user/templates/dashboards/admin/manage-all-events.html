@@ -1,12 +1,12 @@
-{% extends "../admin-dashboard.html" %}
+{% extends "../base-dashboard.html" %}
 {% block title %}Manage Events{% endblock title %}
 
-{% block admin_content %}
+{% block dashboard_content %}
 <section class="w-full flex flex-col justify-start p-4">
     <!-- Header: Search and Create Event -->
     <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 p-4">
         <input id="search-input" type="text" name="search" placeholder="Search by event name" class="flex-1 bg-slate-700/50 text-slate-100 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" />
-        <a href="{% url 'create-event' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md font-semibold transition text-center">Create Event</a>
+        <a href="{% url 'event_form' user.id %}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md font-semibold transition text-center">Create Event</a>
     </div>
 
     <!-- Total Events Card -->
@@ -36,7 +36,10 @@
             </a>
             <div class="flex flex-row gap-2 mt-3">
                 <a href="{% url 'edit-event' event.id %}?next={% url 'manage-all-events' %}" class="flex-1 bg-gradient-to-r from-yellow-500/70 to-orange-500/70 hover:from-yellow-600/90 hover:to-orange-600/90 backdrop-blur-sm text-white font-bold rounded-full py-2 px-4 text-center transition-all duration-200 shadow-lg">Edit</a>
-                <a href="{% url 'delete-event' event.id %}" class="flex-1 bg-gradient-to-r from-red-500/70 to-pink-500/70 hover:from-red-600/90 hover:to-pink-600/90 backdrop-blur-sm text-white font-bold rounded-full py-2 px-4 text-center transition-all duration-200 shadow-lg">Delete</a>
+                <form action="{% url 'delete-event' event.id %}?next={% url 'manage-all-events' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="flex-1 bg-gradient-to-r from-red-500/70 to-pink-500/70 hover:from-red-600/90 hover:to-pink-600/90 backdrop-blur-sm text-white font-bold rounded-full py-2 px-4 text-center transition-all duration-200 shadow-lg">Delete</button>
+                </form>
             </div>
         </div>
         {% empty %}
@@ -46,4 +49,4 @@
         {% endfor %}
     </div>
 </section>
-{% endblock admin_content %}
+{% endblock dashboard_content %}

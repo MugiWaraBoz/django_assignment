@@ -2,9 +2,16 @@ from datetime import date
 from django.shortcuts import render, redirect
 from django.db.models import Count, Q
 from django.contrib import messages
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.tokens import default_token_generator
+from django.urls import reverse_lazy
+from django.utils.decorators import method_decorator
+
+# Class Based Views Import
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from events.models import Event,Category,RSVP
 from events.forms import EventModelForm
@@ -20,159 +27,193 @@ def is_Organizer(u):
 def is_participant(u):
     return u.groups.filter(name="Participants").exists()
 
-# Create your views here.
-def dashboard(request):
-    events = Event.objects.all().select_related('category').prefetch_related('rsvp__participants')
-    events = events.annotate(
-        going_count=Count('rsvp', filter=Q(rsvp__is_going=True))
-    )
-    categories = Category.objects.all()
-    current_date = date.today()
-    category_id = request.GET.get('category')
-    filter_events = request.GET.get('filter_events')
-    search_query = request.GET.get('search')
-    
-    has_rsvp = RSVP.objects.select_related('event', 'participants')
-    if request.user.is_authenticated:
-        rsvped_event_ids = has_rsvp.filter(participants = request.user, is_going=True).values_list('event_id', flat=True)
-    # print(rsvped_event_ids)
+class dashboardClassView(ListView):
+    model = Event
+    template_name = "dashboard.html"
+    context_object_name = "Events"
+
+    def get_base_queryset(self):
+        # Count using annotate
+        return Event.objects.all().select_related('category').prefetch_related(
+            'rsvp__participants'
+            ).annotate (
+            going_count=Count('rsvp', filter=Q(rsvp__is_going=True))
+        )
 
 
-    count = events.aggregate(        
-        total_events = Count('id', distinct=True),
-        Today_events = Count('id',filter=Q(date=current_date)),
-        upcoming_events = Count('id', filter=Q(date__gt=current_date), distinct=True),
-        past_events = Count('id', filter=Q(date__lt=current_date), distinct=True),
-    )
-    
-    # Total Participation count
-    
-    participants_cnt = has_rsvp.filter(is_going=True).aggregate(total_participants=Count('participants', distinct=True))['total_participants']
-    # print(participants_cnt, "---===")
-
-    if filter_events == "Upcoming Events":
-        events = events.filter(date__gt=current_date)
-    elif filter_events == "Past Events":
-        events = events.filter(date__lt=current_date)
-    elif filter_events == "All Events":
-        events = events
-    else:
-        events = events.filter(date=current_date)
-
-    if category_id:
-        events = events.filter(category__id=category_id)
-
-    if search_query:
-        events = events.filter(Q(name__icontains=search_query) | Q(description__icontains=search_query))
-
-    context = {
-        "Events" : events,
-        "categories": categories,
-        "count": count,
-        "participants_cnt" : participants_cnt,
-        "filter_events": filter_events,
-        "search_query": search_query,
-    }
-
-    if request.user.is_authenticated:
-        context["rsvped_event_ids"] = rsvped_event_ids
-    # print(events.values_list())
-
-    if not events.exists():
-        messages.info(request, "No events found matching your criteria.")
-    
-    return render(request, 'dashboard.html', context)
-
-def event_details(request, event_id):
-    event = Event.objects.prefetch_related('rsvp__participants', 'organizers').get(id=event_id)
-    context = {
-        "event": event,
-        "count": event.rsvp.aggregate(participants_cnt=Count('id')),
-    }
-
-    return render(request, "event-details.html", context)
-
-@login_required(login_url="error-405")
-@user_passes_test(lambda u: is_admin(u) or is_Organizer(u), login_url="home")
-def event_form(request, usr_id):
-    form = EventModelForm()
-    org_search_query = request.GET.get('search')
-    organizers = User.objects.filter(groups__name="Organizer")
-
-    if org_search_query:
-        organizers = organizers.filter(username__icontains=org_search_query)
+    def get_queryset(self):
+        queryset = self.get_base_queryset()
         
-    if request.method == "POST":
-        form = EventModelForm(request.POST, request.FILES)
-        form.fields["organizers"].queryset = organizers
-        if form.is_valid():
-            event = form.save(commit=False)
-            event.save()
-            form.save_m2m()
-            event.organizers.add(User.objects.get(id=usr_id))
-            messages.success(request, "Event created successfully!")
-            return redirect('dashboard')
-        else:
-            messages.error(request, "Something went wrong.")
-    else :            
-        form.fields["organizers"].queryset = organizers
-
-    context = {
-        "form": form,
-        # "title": "Add a New Event",
-        "orgs": org_search_query
-    }
-
-    return render(request, "event-form.html", context)
-
-@login_required(login_url="error-405")
-@user_passes_test(lambda u: is_admin(u) or is_Organizer(u), login_url="home")
-def edit_event(request, event_id):
-    event = Event.objects.get(id=event_id)
-    form = EventModelForm(instance=event)
-    org_search_query = request.GET.get('search')
-    organizers = User.objects.filter(groups__name="Organizer")
-
-    if org_search_query:
-        organizers = organizers.filter(username__icontains=org_search_query)
+        # Retrive Data for filtering
+        current_date = date.today()  
+        category_id = self.request.GET.get('category')
+        filter_events = self.request.GET.get('filter_events')
+        search_query = self.request.GET.get('search')
         
-    if request.method == "POST":
-        form = EventModelForm(request.POST,request.FILES, instance=event)
-        form.fields["organizers"].queryset = organizers
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Event updated successfully!")
-            return redirect('dashboard')
+        # Filtering accordingly 
+        if filter_events == "Upcoming Events":
+            queryset = queryset.filter(date__gt=current_date)
+        elif filter_events == "Past Events":
+            queryset = queryset.filter(date__lt=current_date)
+        elif filter_events == "All Events":
+            queryset = queryset
         else:
-            messages.error(request, "Something went wrong.")
-    else :            
+            queryset = queryset.filter(date=current_date)
+
+        if category_id:
+            queryset = queryset.filter(category__id=category_id)
+
+        if search_query:
+            queryset = queryset.filter(
+                Q(name__icontains=search_query) | 
+                Q(description__icontains=search_query)
+            )
+        
+        return queryset.order_by('-date')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        events = self.get_base_queryset()
+        current_date = date.today()  
+        count = events.aggregate(        
+            total_events = Count('id', distinct=True),
+            Today_events = Count('id',filter=Q(date=current_date)),
+            upcoming_events = Count('id', filter=Q(date__gt=current_date), distinct=True),
+            past_events = Count('id', filter=Q(date__lt=current_date), distinct=True),
+        )
+        
+        rsvp = RSVP.objects.select_related('event', 'participants')
+        participants_cnt = rsvp.filter(is_going=True).aggregate(total_participants=Count('participants', distinct=True))['total_participants']
+        # Grabs RSVP'ed event ids to avoid RSVP'ing same event again
+        if self.request.user.is_authenticated:
+            rsvped_event_ids = rsvp.filter(participants = self.request.user, is_going=True).values_list('event_id', flat=True)
+
+                                       # pythons date import
+
+        # Counts using aggregate
+    
+        if self.request.user.is_authenticated:
+            context["rsvped_event_ids"] = rsvped_event_ids
+        
+        categories = Category.objects.all()
+        context["categories"] = categories
+        context["count"] = count
+        context["participants_cnt"] = participants_cnt
+        
+        if not self.get_base_queryset:
+            messages.info(self.request, "No events found matching your criteria.")
+
+        context["filter_events"] = self.request.GET.get('filter_events')
+        context["search_query"] = self.request.GET.get('search')
+        
+        return context
+    
+class event_detailsView(DetailView):
+    model = Event 
+    template_name  = "event-details.html"
+    pk_url_kwarg = 'event_id'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        events = Event.objects.prefetch_related('rsvp__participants', 'organizers').get(id=self.object.pk) 
+        context['event'] = events
+        context['count'] = events.rsvp.aggregate(participants_cnt=Count('id')),
+        return context
+
+permission_decorators = [
+    login_required(login_url="error-405"),
+    user_passes_test(lambda u: is_admin(u) or is_Organizer(u), login_url="home")
+]
+
+@method_decorator(permission_decorators, name='dispatch')
+class event_formView(CreateView):
+    model = Event
+    form_class = EventModelForm
+    permissoin_required = 'events.add_event'
+    success_url = reverse_lazy("dashboard")
+    pk_url_kwarg = "usr_id"
+
+    template_name = "event-form.html"
+    
+    def get_form(self, form_class = None):
+        form = super().get_form(form_class)
+        search = self.request.GET.get("search")
+        organizers = User.objects.filter(groups__name="Organizer")
+
+        if search:
+            organizers = organizers.filter(username__icontains=search)
+        
         form.fields["organizers"].queryset = organizers
 
-    context = {
-        "form": form,
-        "title": "Edit Event",
-        "orgs": org_search_query
-    }
+        return form
+    
+    def form_valid(self, form):
+        usr_id = self.kwargs["usr_id"]
 
-    return render(request, "event-form.html", context)
+        event = form.save(commit=False)
+        event.save()
+        form.save_m2m()
 
-@login_required(login_url="error-405")
-@user_passes_test(lambda u: is_admin(u) or is_Organizer(u), login_url="home")
-def delete_event(request, event_id):
-    """
-    next_url places the current active url after deletion
-    """
-    next_url = request.GET.get('next', request.META.get('HTTP_REFERER', '/'))
+        event.organizers.add(User.objects.get(id=usr_id))
 
-    try:
-        event = Event.objects.get(id=event_id)
-        event.delete()
-        messages.success(request, "Event deleted successfully!")
-    except Event.DoesNotExist:
-        messages.error(request, "Event not found.")
+        messages.success(self.request, "Event created successfully!")
+        return super().form_valid(form)
+    
+    def form_invalid(self, form):
+        messages.error(self.request, "Something went wrong.")
+        return super().form_invalid(form)
+    
+@method_decorator(permission_decorators, name='dispatch')
+class edit_eventView(UpdateView):
+    model = Event
+    form_class = EventModelForm
+    permission_required = "events.change_event"
+    template_name = "event-form.html"
+    pk_url_kwarg = "event_id"
+    success_url = reverse_lazy("dashboard")
 
-    # print(next_url)
-    return redirect(next_url)
+    def get_form(self, form_class = None):
+        form = super().get_form(form_class)
+        org_search_query = self.request.GET.get('search')
+        organizers = User.objects.filter(groups__name="Organizer")
+
+        if org_search_query:
+            organizers = organizers.filter(username__icontains=org_search_query)
+
+        form.fields["organizers"].queryset = organizers
+
+        return form
+    
+    def form_valid(self, form):
+        event = Event.objects.get(id = self.object.pk)
+        form = EventModelForm(self.request.POST,self.request.FILES, instance=event)
+        form.save()
+        messages.success(self.request, "Event updated successfully!")
+        return super().form_valid(form)
+    
+    def form_invalid(self, form):
+        messages.error(self.request, "Something went wrong.")
+        response = super().form_invalid(form)
+        return response
+    
+@method_decorator(permission_decorators, name='dispatch')
+class delete_eventView(DeleteView):
+    model = Event
+    pk_url_kwarg = "event_id"
+    template_name = None
+
+    def form_valid(self, form):
+        messages.success(self.request, "Event deleted successfully!")
+        return super().form_valid(form)
+    
+
+    def get_success_url(self):
+        return (
+            self.request.POST.get("next")
+            or self.request.GET.get("next")
+            or reverse_lazy("dashboard")
+        )
 
 
 @login_required(login_url="error-405")

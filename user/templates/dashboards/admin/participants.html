@@ -1,6 +1,6 @@
-{% extends "../admin-dashboard.html" %}
+{% extends "../base-dashboard.html" %}
 {% block title %}Participants{% endblock title %}
-{% block admin_content %}
+{% block dashboard_content %}
 <div class="w-full flex flex-col justify-start p-4">
     <div class="flex p-4">
         <input id="search-input" type="text" name="search" placeholder="Search by username or email" class="w-full bg-slate-700/50 text-slate-100 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
@@ -18,8 +18,8 @@
                 <p class="text-slate-300 my-1">Events Participated: <span class="text-white">{{ Participant.event_participated_count }}</span></p>
             </div>
             <div class="flex justify-center items-center flex-shrink-0 mt-4 md:mt-0 md:ml-6">
-                {% if Participant.profile.profile_img %}
-                    <img src="{{ Participant.profile.profile_img.url }}" alt="{{ Participant.first_name }} {{ Participant.last_name }}" class="object-cover w-32 h-32 bg-slate-700/30 backdrop-blur-sm flex items-center justify-center rounded-full border-4 border-indigo-400 shadow-md">
+                {% if Participant.profile_img %}
+                    <img src="{{ Participant.profile_img.url }}" alt="{{ Participant.first_name }} {{ Participant.last_name }}" class="object-cover w-32 h-32 bg-slate-700/30 backdrop-blur-sm flex items-center justify-center rounded-full border-4 border-indigo-400 shadow-md">
                 {% else %}
                     <div class="w-32 h-32 bg-slate-700/30 backdrop-blur-sm flex items-center justify-center rounded-full border-4 border-indigo-400 shadow-md">
                         <span class="text-slate-400 text-center">No Image</span>

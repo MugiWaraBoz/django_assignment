@@ -2,19 +2,26 @@ from django.shortcuts import render
 from django.shortcuts import render, redirect
 from django.db.models import Count, Q
 from django.contrib import messages
-from django.contrib.auth.models import User, Group
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
+
+User = get_user_model()
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test, login_not_required
 from django.contrib.auth.tokens import default_token_generator
 from django.db.models import Prefetch
+from django.utils.decorators import method_decorator
+from django.urls import reverse_lazy
 
+from django.views.generic import TemplateView, UpdateView
+from django.contrib.auth.views import PasswordChangeView, PasswordResetView, PasswordResetConfirmView
 
 from datetime import date
 
 from events.models import RSVP, Event,Category
 from events.views import is_admin, is_Organizer, is_participant
-from user.forms import CustomAuthenticationForm, userCreationForm
-from user.models import Profile
+from user.forms import CustomAuthenticationForm, userCreationForm, EditProfileForm, CustomPasswordChangeForm, CustomPasswordResetForm, CustomPasswordConfirmForm
+# from user.models import Profile
 
 # Create your views here.
 @login_not_required
@@ -47,12 +54,6 @@ def sign_up(request):
             user.set_password(form.cleaned_data.get("password"))
             user.is_active = False
             user.save()
-
-            profile = Profile.objects.create(
-                user=user,
-                profile_img=form.cleaned_data.get("profile_img")
-            )
-            profile.save()
             role = form.cleaned_data.get("role")
             if role :
                 group, created = Group.objects.get_or_create(name=role)
@@ -98,12 +99,87 @@ def activate_account(request, uid, token):
         messages.error(request, "Invalid Activation Link")
         return redirect("home")
 
-# ADMIN DASHBOARD VIEWS
 
+"""
+    PROFILE SETTINGS
+
+"""
+permission_decorators = [
+    login_required(login_url="error-405"),
+]
+
+@method_decorator(permission_decorators, name='dispatch')
+class EditProfileView(UpdateView):
+    model = User
+    form_class = EditProfileForm
+    template_name = 'account/update.html'
+    context_object_name = 'user'
+
+    def get_object(self):
+        return self.request.user
+    
+    def form_valid(self, form):
+        form.save()
+        return redirect("acc-details", self.object.pk)
+    
+@method_decorator(permission_decorators, name='dispatch')
+class accDetailView(TemplateView):
+    template_name = "account/acc-details.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+
+        context['username'] = user.username
+        context['email'] = user.email
+        context['full_name'] = user.get_full_name()
+        context['member_since'] = user.date_joined
+        context['last_login'] = user.last_login
+        context['profile_picture'] = user.profile_images if user.profile_images else None
+        context['bio'] = user.bio
+
+        return context
+@method_decorator(permission_decorators, name='dispatch')
+class changePassView(PasswordChangeView):
+    form_class = CustomPasswordChangeForm
+    template_name = 'account/password_change.html'
+    success_url = '/users/password-change/done'
+
+@method_decorator(permission_decorators, name='dispatch')
+class resetPassView(PasswordResetView):
+    template_name = 'account/password_reset.html'
+    form_class = CustomPasswordResetForm
+    success_url = reverse_lazy('sign-in')
+    html_email_template_name = "account/reset_email.html"
+
+    def form_valid(self, form):
+        messages.success(self.request, "Password reset email has been sent if the email exists in our system.")
+        return super().form_valid(form)
+    
+
+class ConfirmResetPassView(PasswordResetConfirmView):
+    form_class = CustomPasswordConfirmForm
+    template_name = 'account/reset_confirm.html'
+    success_url = reverse_lazy('sign-in')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['protocol'] = 'https' if self.request.is_secure() else 'http'
+        context['domain'] = self.request.get_host()
+        return context
+    
+    def form_valid(self, form):
+        messages.success(self.request, "Your password has been reset successfully! You can now log in.")
+        return super().form_valid(form)
+    
+
+"""
+    ADMIN DASHBOARD VIEWS
+"""
 @login_required(login_url="home")
 @user_passes_test(is_admin, login_url="no-permission")
 def admin_dashboard(request):
-    return render(request, "dashboards/admin-dashboard.html")
+    return render(request, "dashboards/base-dashboard.html")
 
 @login_required(login_url="home")
 @user_passes_test(is_admin, login_url="no-permission")
@@ -134,7 +210,7 @@ def change_user_group(request, user_id):
 @login_required(login_url="home")
 @user_passes_test(is_admin, login_url="no-permission")
 def organizers(request):
-    organizers = User.objects.select_related('profile').prefetch_related('groups', 'events').filter(groups__name="Organizer")
+    organizers = User.objects.prefetch_related('groups', 'events').filter(groups__name="Organizer")
     organizers = organizers.annotate(event_organized_count=Count('events', distinct=True))
     context = {
         "organizers" : organizers,
@@ -144,7 +220,7 @@ def organizers(request):
 @login_required(login_url="home")
 @user_passes_test(is_admin, login_url="no-permission")
 def participants(request):
-    participants = User.objects.select_related('profile').prefetch_related('groups', 'events', 'rsvp').filter(groups__name="Participants")
+    participants = User.objects.prefetch_related('groups', 'events', 'rsvp').filter(groups__name="Participants")
     participants = participants.annotate(event_participated_count=Count('rsvp__event', distinct=True))
     context = {
         "participants" : participants
@@ -176,11 +252,15 @@ def admin_view_rsvps(request):
     all_rsvps = RSVP.objects.select_related('event', 'participants').filter(participants=request.user)
     return render(request, "dashboards/admin/view-rsvps.html", {"rsvps": all_rsvps})
 
-# ORGANIZER DASHBOARD VIEWS
+
+"""
+    ORGANIZER DASHBOARD VIEWS
+"""
+
 @login_required(login_url="home")
 @user_passes_test(is_Organizer, login_url="no-permission")
 def organizer_dashboard(request, id):       
-    return render(request, "dashboards/organizer-dashboard.html", {"id": id})   
+    return render(request, "dashboards/base-dashboard.html", {"id": id})   
 
 @login_required(login_url="home")
 @user_passes_test(is_Organizer, login_url="no-permission")
@@ -203,14 +283,15 @@ def create_event_org(request, id):
     return render(request, "dashboards/organizer/event_creation.html", {"id": id})
 
 
+"""
+    USER DASHBOARD VIEWS
+"""
 
 
-# USER DASHBOARD VIEWS
 @login_required(login_url="home")
 @user_passes_test(is_participant, login_url="no-permission")
 def user_dashboard(request, id): 
-    return render(request, "dashboards/user-dashboard.html", {"id": id})
-
+    return render(request, "dashboards/base-dashboard.html", {"id": id})
 
 @login_required(login_url="home")
 @user_passes_test(is_participant, login_url="no-permission")

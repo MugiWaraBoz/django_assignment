@@ -1,6 +1,8 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import Group
+
+from event_management import settings
 
 # Create your models here.
 class Event(models.Model):
@@ -18,7 +20,7 @@ class Event(models.Model):
         related_name = "events")
     
     organizers = models.ManyToManyField(
-        User,
+        settings.AUTH_USER_MODEL,
         related_name = "events",
         blank=True,
     )
@@ -44,7 +46,7 @@ class RSVP(models.Model):
     )
 
     participants = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name = "rsvp",
     )
