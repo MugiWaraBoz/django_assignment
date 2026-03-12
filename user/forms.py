@@ -5,6 +5,8 @@ from events.forms import MixinStyleForm
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
+from django.contrib.auth.forms import PasswordChangeForm, PasswordResetForm, SetPasswordForm
+
 class EditProfileForm(MixinStyleForm, forms.ModelForm):
     class Meta:
         model = User
@@ -64,4 +66,13 @@ class userCreationForm(MixinStyleForm, forms.ModelForm):
 class CustomAuthenticationForm(MixinStyleForm, forms.Form):
     username = forms.CharField(widget=forms.TextInput, required=True)
     password = forms.CharField(widget=forms.PasswordInput, required=True)
-    
+
+
+class CustomPasswordChangeForm(MixinStyleForm, PasswordChangeForm):
+    pass
+
+class CustomPasswordResetForm(MixinStyleForm, PasswordResetForm):
+    pass
+
+class CustomPasswordConfirmForm(MixinStyleForm, SetPasswordForm):
+    pass

@@ -7,6 +7,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test, login_not_required
 from django.contrib.auth.tokens import default_token_generator
 from django.db.models import Prefetch
+from django.utils.decorators import method_decorator
 
 from django.views.generic import TemplateView, UpdateView
 from django.contrib.auth.views import PasswordChangeView, PasswordResetView
@@ -15,7 +16,7 @@ from datetime import date
 
 from events.models import RSVP, Event,Category
 from events.views import is_admin, is_Organizer, is_participant
-from user.forms import CustomAuthenticationForm, userCreationForm, EditProfileForm
+from user.forms import CustomAuthenticationForm, userCreationForm, EditProfileForm, CustomPasswordChangeForm
 from user.models import Profile
 
 # Create your views here.
@@ -102,13 +103,18 @@ def activate_account(request, uid, token):
 
 
 """
-    profile settings
+    PROFILE SETTINGS
 
 """
+permission_decorators = [
+    login_required(login_url="error-405"),
+]
+
+@method_decorator(permission_decorators, name='dispatch')
 class EditProfileView(UpdateView):
     model = User
     form_class = EditProfileForm
-    template_name = 'dashboards/update.html'
+    template_name = 'account/update.html'
     context_object_name = 'user'
 
     def get_object(self):
@@ -118,8 +124,9 @@ class EditProfileView(UpdateView):
         form.save()
         return redirect("acc-details", self.object.pk)
     
+@method_decorator(permission_decorators, name='dispatch')
 class accDetailView(TemplateView):
-    template_name = "dashboards/admin-dashboard.html"
+    template_name = "dashboards/base-dashboard.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -137,10 +144,13 @@ class accDetailView(TemplateView):
         context['profile_picture'] = profile_picture
 
         return context
-
+@method_decorator(permission_decorators, name='dispatch')
 class changePassView(PasswordChangeView):
-    pass
+    form_class = CustomPasswordChangeForm
+    template_name = 'account/password_change.html'
+    success_url = '/users/password-change/done'
 
+@method_decorator(permission_decorators, name='dispatch')
 class resetPassView(PasswordResetView):
     pass
 
