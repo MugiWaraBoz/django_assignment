@@ -7,9 +7,11 @@ from decouple import config
 from datetime import date
 
 
-from events.models import Event, RSVP, User
+from events.models import Event, RSVP
 from event_management import settings
+from django.contrib.auth import get_user_model
 
+User = get_user_model()
 # New Event Signal
 @receiver(post_save, sender=Event)
 def new_event_added(sender, created, instance, **kwargs):
@@ -47,3 +49,7 @@ def RSVP_a_event(sender, created, instance, **kwargs):
             )
         except Exception as e:
             print(f"❌ Error sending RSVP activation email: {e}")
+
+# 	cindy36
+# carternatasha
+#  Password123! 

@@ -64,6 +64,28 @@
                 {% endif %}
             </div>
 
+            <!-- Profile Image -->
+            <div>
+                <label for="{{ form.profile_images.id_for_label }}" class="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">
+                    Profile Picture
+                </label>
+                {{ form.profile_images }}
+                {% if form.profile_images.errors %}
+                    <p class="text-red-400 text-xs mt-1">{{ form.profile_images.errors|join:", " }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Bio -->
+            <div>
+                <label for="{{ form.bio.id_for_label }}" class="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">
+                    Bio
+                </label>
+                {{ form.bio }}
+                {% if form.bio.errors %}
+                    <p class="text-red-400 text-xs mt-1">{{ form.bio.errors|join:", " }}</p>
+                {% endif %}
+            </div>
+
             <!-- Non-field errors -->
             {% if form.non_field_errors %}
                 <div class="bg-red-500/10 border border-red-500/30 rounded-lg p-3">

@@ -2,7 +2,10 @@ from django.shortcuts import render
 from django.shortcuts import render, redirect
 from django.db.models import Count, Q
 from django.contrib import messages
-from django.contrib.auth.models import User, Group
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
+
+User = get_user_model()
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test, login_not_required
 from django.contrib.auth.tokens import default_token_generator
@@ -18,7 +21,7 @@ from datetime import date
 from events.models import RSVP, Event,Category
 from events.views import is_admin, is_Organizer, is_participant
 from user.forms import CustomAuthenticationForm, userCreationForm, EditProfileForm, CustomPasswordChangeForm, CustomPasswordResetForm, CustomPasswordConfirmForm
-from user.models import Profile
+# from user.models import Profile
 
 # Create your views here.
 @login_not_required
@@ -51,12 +54,6 @@ def sign_up(request):
             user.set_password(form.cleaned_data.get("password"))
             user.is_active = False
             user.save()
-
-            profile = Profile.objects.create(
-                user=user,
-                profile_img=form.cleaned_data.get("profile_img")
-            )
-            profile.save()
             role = form.cleaned_data.get("role")
             if role :
                 group, created = Group.objects.get_or_create(name=role)
@@ -138,11 +135,8 @@ class accDetailView(TemplateView):
         context['full_name'] = user.get_full_name()
         context['member_since'] = user.date_joined
         context['last_login'] = user.last_login
-        profile_picture = None
-        profile = getattr(user, 'profile', None)
-        if profile and profile.profile_img:
-            profile_picture = profile.profile_img
-        context['profile_picture'] = profile_picture
+        context['profile_picture'] = user.profile_images if user.profile_images else None
+        context['bio'] = user.bio
 
         return context
 @method_decorator(permission_decorators, name='dispatch')
@@ -216,7 +210,7 @@ def change_user_group(request, user_id):
 @login_required(login_url="home")
 @user_passes_test(is_admin, login_url="no-permission")
 def organizers(request):
-    organizers = User.objects.select_related('profile').prefetch_related('groups', 'events').filter(groups__name="Organizer")
+    organizers = User.objects.prefetch_related('groups', 'events').filter(groups__name="Organizer")
     organizers = organizers.annotate(event_organized_count=Count('events', distinct=True))
     context = {
         "organizers" : organizers,
@@ -226,7 +220,7 @@ def organizers(request):
 @login_required(login_url="home")
 @user_passes_test(is_admin, login_url="no-permission")
 def participants(request):
-    participants = User.objects.select_related('profile').prefetch_related('groups', 'events', 'rsvp').filter(groups__name="Participants")
+    participants = User.objects.prefetch_related('groups', 'events', 'rsvp').filter(groups__name="Participants")
     participants = participants.annotate(event_participated_count=Count('rsvp__event', distinct=True))
     context = {
         "participants" : participants

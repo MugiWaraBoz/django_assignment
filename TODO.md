@@ -35,8 +35,10 @@
   - [✅] Navbar Updated
 - [✅] Website UI resposive
 - [✅] SQL Optimization
-- [] Custom User Mode created and configured
-- [] Change Password/ Reset Password
+- [✅] Edit Profile Page
+- [✅] Custom User Mode created and configured
+- [✅] Change Password/ Reset Password
+
 
 ## FIX
 
@@ -45,4 +47,4 @@
 
 ## Refactoring
 
-- [] Converted Atleast 5 function that can be changable to ClassBasedView
+- [✅] Converted Atleast 5 function that can be changable to ClassBasedView

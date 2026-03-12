@@ -49,13 +49,19 @@
             <a href="{% url 'reset-password' user.id %}" class="py-3 px-4 hover:bg-slate-700/50 text-lg border-b border-slate-700/40 text-slate-100 hover:text-blue-100 rounded-md transition-all">Reset Password</a>
 
             {% block sidebar_links %}
-                {% if is_admin %}
+                {% load user_user_filters %}
+                {% if user.is_superuser %}
+                    {% comment %} {% url 'admin-dashboard' %} {% endcomment %}
                     {% include "dashboards/admin-dashboard.html" %}
-                {% elif is_Organizer %}
+                {% elif user|in_group:'Organizer' %}
                     {% include "dashboards/organizer-dashboard.html" %}
-                {% else %}
+                    {% comment %} {% url 'organizer-dashboard' user.id %} {% endcomment %}
+                {% elif user|in_group:'Participants' %}
+                    {% comment %} {% url 'user-dashboard' user.id %} {% endcomment %}
                     {% include "dashboards/user-dashboard.html" %}
                 {% endif %}
+                
+
             <!-- Sidebar links will be defined in child templates -->
             {% endblock sidebar_links %}
         </nav>

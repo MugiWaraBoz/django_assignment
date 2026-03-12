@@ -18,8 +18,8 @@
                 <p class="text-slate-300 my-1">Events Organized: <span class="text-white">{{ Organizer.event_organized_count }}</span></p>
             </div>
             <div class="flex justify-center items-center flex-shrink-0 mt-4 md:mt-0 md:ml-6">
-                {% if Organizer.profile.profile_img %}
-                    <img src="{{ Organizer.profile.profile_img.url }}" alt="{{ Organizer.first_name }} {{ Organizer.last_name }}" class="object-cover w-32 h-32 bg-slate-700/30 backdrop-blur-sm flex items-center justify-center rounded-full border-4 border-indigo-400 shadow-md">
+                {% if Organizer.profile_img %}
+                    <img src="{{ Organizer.profile_img.url }}" alt="{{ Organizer.first_name }} {{ Organizer.last_name }}" class="object-cover w-32 h-32 bg-slate-700/30 backdrop-blur-sm flex items-center justify-center rounded-full border-4 border-indigo-400 shadow-md">
                 {% else %}
                     <div class="w-32 h-32 bg-slate-700/30 backdrop-blur-sm flex items-center justify-center rounded-full border-4 border-indigo-400 shadow-md">
                         <span class="text-slate-400 text-center">No Image</span>

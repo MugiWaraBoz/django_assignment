@@ -2,7 +2,9 @@ from datetime import date
 from django.shortcuts import render, redirect
 from django.db.models import Count, Q
 from django.contrib import messages
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.tokens import default_token_generator
 from django.urls import reverse_lazy
